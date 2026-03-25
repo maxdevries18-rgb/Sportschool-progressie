@@ -1,0 +1,108 @@
+import Link from "next/link";
+import { getAllSessions } from "@/lib/queries/sessions";
+import { formatDate } from "@/lib/utils";
+
+export default async function SessionsPage() {
+  const sessions = await getAllSessions();
+
+  return (
+    <div className="mx-auto max-w-4xl">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <Link
+              href="/"
+              className="text-sm text-indigo-600 hover:text-indigo-500"
+            >
+              &larr; Dashboard
+            </Link>
+            <h1 className="mt-2 text-3xl font-bold text-gray-900">Sessies</h1>
+          </div>
+          <Link
+            href="/sessions/new"
+            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+            Nieuwe Sessie
+          </Link>
+        </div>
+
+        {sessions.length === 0 ? (
+          <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
+            <svg
+              className="mx-auto mb-4 h-12 w-12 text-gray-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+              />
+            </svg>
+            <h3 className="text-lg font-medium text-gray-900">
+              Nog geen sessies
+            </h3>
+            <p className="mt-1 text-gray-500">
+              Begin met het vastleggen van je eerste training!
+            </p>
+            <Link
+              href="/sessions/new"
+              className="mt-4 inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            >
+              Eerste sessie aanmaken
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {sessions.map((session) => (
+              <Link
+                key={session.id}
+                href={`/sessions/${session.id}`}
+                className="block rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      {formatDate(session.date)}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {session.participants
+                        .map((p) => p.userName)
+                        .join(", ")}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
+                      {session.exerciseCount}{" "}
+                      {session.exerciseCount === 1
+                        ? "oefening"
+                        : "oefeningen"}
+                    </span>
+                  </div>
+                </div>
+                {session.notes && (
+                  <p className="mt-2 text-sm text-gray-500 line-clamp-1">
+                    {session.notes}
+                  </p>
+                )}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+  );
+}
