@@ -23,9 +23,9 @@ export function Header() {
   }
 
   return (
-    <header className="bg-gray-900 text-white">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
           <span role="img" aria-label="gewichtheffen">
             🏋️
           </span>
@@ -40,8 +40,8 @@ export function Header() {
               href={link.href}
               className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 isActive(link.href)
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                  ? "bg-gray-100 dark:bg-gray-700 text-indigo-600 dark:text-white"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
               {link.label}
@@ -53,7 +53,7 @@ export function Header() {
         {/* Mobiel hamburger knop */}
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-800 hover:text-white md:hidden"
+          className="inline-flex items-center justify-center rounded-md p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-expanded={menuOpen}
           aria-label="Menu openen"
@@ -92,7 +92,7 @@ export function Header() {
 
       {/* Mobiel menu */}
       {menuOpen && (
-        <nav className="border-t border-gray-700 px-4 pb-4 md:hidden">
+        <nav className="border-t border-gray-200 dark:border-gray-700 px-4 pb-4 md:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -100,14 +100,14 @@ export function Header() {
               onClick={() => setMenuOpen(false)}
               className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
                 isActive(link.href)
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                  ? "bg-gray-100 dark:bg-gray-700 text-indigo-600 dark:text-white"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
               {link.label}
             </Link>
           ))}
-          <div className="mt-2 border-t border-gray-700 pt-2">
+          <div className="mt-2 border-t border-gray-200 dark:border-gray-700 pt-2">
             <ThemeToggle />
           </div>
         </nav>
