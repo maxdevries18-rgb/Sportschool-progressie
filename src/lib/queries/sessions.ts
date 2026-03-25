@@ -12,11 +12,21 @@ export async function getAllSessions() {
       notes: schema.sessions.notes,
       createdAt: schema.sessions.createdAt,
       exerciseCount:
-        sql<number>`(select count(distinct ${schema.sessionExercises.id}) from ${schema.sessionExercises} where ${schema.sessionExercises.sessionId} = ${schema.sessions.id})`.as(
+        sql<number>`count(distinct ${schema.sessionExercises.id})`.as(
           "exercise_count"
         ),
     })
     .from(schema.sessions)
+    .leftJoin(
+      schema.sessionExercises,
+      eq(schema.sessionExercises.sessionId, schema.sessions.id)
+    )
+    .groupBy(
+      schema.sessions.id,
+      schema.sessions.date,
+      schema.sessions.notes,
+      schema.sessions.createdAt
+    )
     .orderBy(desc(schema.sessions.date));
 
   // Fetch participants for each session in one query
