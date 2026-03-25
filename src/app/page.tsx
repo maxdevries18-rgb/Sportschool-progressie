@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { sessions, sessionParticipants, users, sessionExercises } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { formatDate, getWeekLabel } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
 import { getWeeklyOverview } from "@/lib/queries/weekly";
 import { Badge } from "@/components/ui/badge";
 import { MUSCLE_GROUP_LABELS } from "@/lib/constants";

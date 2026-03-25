@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getAllSessions } from "@/lib/queries/sessions";
 import { formatDate } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function SessionsPage() {
   const sessions = await getAllSessions();
 

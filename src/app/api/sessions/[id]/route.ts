@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import {
   getSessionById,
   deleteSession,
   updateSession,
+  updateSessionMeta,
 } from "@/lib/queries/sessions";
 
 export async function GET(
@@ -61,6 +63,54 @@ export async function PUT(
       exercises,
     });
 
+    revalidatePath(`/sessions/${id}`);
+    revalidatePath("/sessions");
+    revalidatePath("/");
+
+    return NextResponse.json(session);
+  } catch (error) {
+    console.error("Fout bij bijwerken sessie:", error);
+    return NextResponse.json(
+      { error: "Kon sessie niet bijwerken." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const sessionId = parseInt(id, 10);
+    if (isNaN(sessionId)) {
+      return NextResponse.json(
+        { error: "Ongeldig sessie-ID." },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const { date, notes, participantIds } = body;
+
+    if (!date || !participantIds?.length) {
+      return NextResponse.json(
+        { error: "Datum en deelnemers zijn verplicht." },
+        { status: 400 }
+      );
+    }
+
+    const session = await updateSessionMeta(sessionId, {
+      date,
+      notes: notes || undefined,
+      participantIds,
+    });
+
+    revalidatePath(`/sessions/${id}`);
+    revalidatePath("/sessions");
+    revalidatePath("/");
+
     return NextResponse.json(session);
   } catch (error) {
     console.error("Fout bij bijwerken sessie:", error);
@@ -78,6 +128,10 @@ export async function DELETE(
   try {
     const { id } = await params;
     await deleteSession(Number(id));
+
+    revalidatePath("/sessions");
+    revalidatePath("/");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Fout bij verwijderen sessie:", error);

@@ -89,7 +89,7 @@ export async function createSession(data: {
   date: string;
   notes?: string;
   participantIds: number[];
-  exercises: {
+  exercises?: {
     exerciseId: number;
     sortOrder: number;
     sets: {
@@ -120,27 +120,29 @@ export async function createSession(data: {
       );
     }
 
-    // 3. Add exercises and their sets
-    for (const exercise of data.exercises) {
-      const [sessionExercise] = await tx
-        .insert(schema.sessionExercises)
-        .values({
-          sessionId: session.id,
-          exerciseId: exercise.exerciseId,
-          sortOrder: exercise.sortOrder,
-        })
-        .returning();
+    // 3. Add exercises and their sets (optional)
+    if (data.exercises && data.exercises.length > 0) {
+      for (const exercise of data.exercises) {
+        const [sessionExercise] = await tx
+          .insert(schema.sessionExercises)
+          .values({
+            sessionId: session.id,
+            exerciseId: exercise.exerciseId,
+            sortOrder: exercise.sortOrder,
+          })
+          .returning();
 
-      if (exercise.sets.length > 0) {
-        await tx.insert(schema.sets).values(
-          exercise.sets.map((set) => ({
-            sessionExerciseId: sessionExercise.id,
-            userId: set.userId,
-            setNumber: set.setNumber,
-            reps: set.reps,
-            weightKg: set.weightKg,
-          }))
-        );
+        if (exercise.sets.length > 0) {
+          await tx.insert(schema.sets).values(
+            exercise.sets.map((set) => ({
+              sessionExerciseId: sessionExercise.id,
+              userId: set.userId,
+              setNumber: set.setNumber,
+              reps: set.reps,
+              weightKg: set.weightKg,
+            }))
+          );
+        }
       }
     }
 
@@ -227,4 +229,79 @@ export async function deleteSession(id: number) {
     .delete(schema.sessions)
     .where(eq(schema.sessions.id, id))
     .returning();
+}
+
+export async function addExerciseToSession(data: {
+  sessionId: number;
+  exerciseId: number;
+  sets: { userId: number; setNumber: number; reps: number; weightKg: number }[];
+}) {
+  return db.transaction(async (tx) => {
+    const existing = await tx
+      .select({
+        maxOrder:
+          sql<number>`coalesce(max(${schema.sessionExercises.sortOrder}), -1)`,
+      })
+      .from(schema.sessionExercises)
+      .where(eq(schema.sessionExercises.sessionId, data.sessionId));
+
+    const nextOrder = (existing[0]?.maxOrder ?? -1) + 1;
+
+    const [sessionExercise] = await tx
+      .insert(schema.sessionExercises)
+      .values({
+        sessionId: data.sessionId,
+        exerciseId: data.exerciseId,
+        sortOrder: nextOrder,
+      })
+      .returning();
+
+    if (data.sets.length > 0) {
+      await tx.insert(schema.sets).values(
+        data.sets.map((s) => ({
+          sessionExerciseId: sessionExercise.id,
+          userId: s.userId,
+          setNumber: s.setNumber,
+          reps: s.reps,
+          weightKg: s.weightKg,
+        }))
+      );
+    }
+
+    return sessionExercise;
+  });
+}
+
+export async function removeExerciseFromSession(sessionExerciseId: number) {
+  return db
+    .delete(schema.sessionExercises)
+    .where(eq(schema.sessionExercises.id, sessionExerciseId))
+    .returning();
+}
+
+export async function updateSessionMeta(
+  id: number,
+  data: { date: string; notes?: string; participantIds: number[] }
+) {
+  return db.transaction(async (tx) => {
+    const [session] = await tx
+      .update(schema.sessions)
+      .set({ date: data.date, notes: data.notes })
+      .where(eq(schema.sessions.id, id))
+      .returning();
+
+    if (!session) throw new Error("Sessie niet gevonden");
+
+    await tx
+      .delete(schema.sessionParticipants)
+      .where(eq(schema.sessionParticipants.sessionId, id));
+
+    if (data.participantIds.length > 0) {
+      await tx.insert(schema.sessionParticipants).values(
+        data.participantIds.map((userId) => ({ sessionId: id, userId }))
+      );
+    }
+
+    return session;
+  });
 }

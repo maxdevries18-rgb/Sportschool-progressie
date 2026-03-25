@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAllSessions, createSession } from "@/lib/queries/sessions";
 
 export async function GET() {
@@ -20,9 +21,9 @@ export async function POST(request: Request) {
 
     const { date, notes, participantIds, exercises } = body;
 
-    if (!date || !participantIds?.length || !exercises?.length) {
+    if (!date || !participantIds?.length) {
       return NextResponse.json(
-        { error: "Datum, deelnemers en oefeningen zijn verplicht." },
+        { error: "Datum en deelnemers zijn verplicht." },
         { status: 400 }
       );
     }
@@ -31,8 +32,11 @@ export async function POST(request: Request) {
       date,
       notes,
       participantIds,
-      exercises,
+      exercises: exercises || [],
     });
+
+    revalidatePath("/sessions");
+    revalidatePath("/");
 
     return NextResponse.json(session, { status: 201 });
   } catch (error) {

@@ -21,6 +21,10 @@ export function calculateVolume(reps: number, weightKg: number): number {
   return reps * weightKg;
 }
 
+export function parseWeight(value: string): number {
+  return Number(value.replace(",", "."));
+}
+
 export function todayDateString(): string {
   return new Date().toISOString().split("T")[0];
 }
