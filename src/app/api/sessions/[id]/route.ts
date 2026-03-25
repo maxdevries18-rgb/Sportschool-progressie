@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { getSessionById, deleteSession } from "@/lib/queries/sessions";
+import {
+  getSessionById,
+  deleteSession,
+  updateSession,
+} from "@/lib/queries/sessions";
 
 export async function GET(
   _request: Request,
@@ -21,6 +25,47 @@ export async function GET(
     console.error("Fout bij ophalen sessie:", error);
     return NextResponse.json(
       { error: "Kon sessie niet ophalen." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const sessionId = parseInt(id, 10);
+    if (isNaN(sessionId)) {
+      return NextResponse.json(
+        { error: "Ongeldig sessie-ID." },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const { date, notes, participantIds, exercises } = body;
+
+    if (!date || !participantIds?.length || !exercises?.length) {
+      return NextResponse.json(
+        { error: "Datum, deelnemers en oefeningen zijn verplicht." },
+        { status: 400 }
+      );
+    }
+
+    const session = await updateSession(sessionId, {
+      date,
+      notes: notes || undefined,
+      participantIds,
+      exercises,
+    });
+
+    return NextResponse.json(session);
+  } catch (error) {
+    console.error("Fout bij bijwerken sessie:", error);
+    return NextResponse.json(
+      { error: "Kon sessie niet bijwerken." },
       { status: 500 }
     );
   }

@@ -11,11 +11,11 @@ export default async function SessionsPage() {
           <div>
             <Link
               href="/"
-              className="text-sm text-indigo-600 hover:text-indigo-500"
+              className="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
             >
               &larr; Dashboard
             </Link>
-            <h1 className="mt-2 text-3xl font-bold text-gray-900">Sessies</h1>
+            <h1 className="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">Sessies</h1>
           </div>
           <Link
             href="/sessions/new"
@@ -39,9 +39,9 @@ export default async function SessionsPage() {
         </div>
 
         {sessions.length === 0 ? (
-          <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
+          <div className="rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">
             <svg
-              className="mx-auto mb-4 h-12 w-12 text-gray-300"
+              className="mx-auto mb-4 h-12 w-12 text-gray-300 dark:text-gray-500"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
@@ -53,10 +53,10 @@ export default async function SessionsPage() {
                 d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
               />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
               Nog geen sessies
             </h3>
-            <p className="mt-1 text-gray-500">
+            <p className="mt-1 text-gray-500 dark:text-gray-400">
               Begin met het vastleggen van je eerste training!
             </p>
             <Link
@@ -72,21 +72,21 @@ export default async function SessionsPage() {
               <Link
                 key={session.id}
                 href={`/sessions/${session.id}`}
-                className="block rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
+                className="block rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 dark:text-gray-100">
                       {formatDate(session.date)}
                     </p>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                       {session.participants
                         .map((p) => p.userName)
                         .join(", ")}
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
+                    <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">
                       {session.exerciseCount}{" "}
                       {session.exerciseCount === 1
                         ? "oefening"
@@ -95,7 +95,7 @@ export default async function SessionsPage() {
                   </div>
                 </div>
                 {session.notes && (
-                  <p className="mt-2 text-sm text-gray-500 line-clamp-1">
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
                     {session.notes}
                   </p>
                 )}

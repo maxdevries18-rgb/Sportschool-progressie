@@ -24,3 +24,29 @@ export function calculateVolume(reps: number, weightKg: number): number {
 export function todayDateString(): string {
   return new Date().toISOString().split("T")[0];
 }
+
+export function getWeekLabel(weekStartStr: string): string {
+  const weekStart = new Date(weekStartStr);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 6);
+
+  const weekNum = getISOWeekNumber(weekStart);
+  const startStr = weekStart.toLocaleDateString("nl-NL", {
+    day: "numeric",
+    month: "short",
+  });
+  const endStr = weekEnd.toLocaleDateString("nl-NL", {
+    day: "numeric",
+    month: "short",
+  });
+
+  return `Week ${weekNum} (${startStr} - ${endStr})`;
+}
+
+function getISOWeekNumber(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}

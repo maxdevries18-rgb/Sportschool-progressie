@@ -1,0 +1,17 @@
+{
+  "name": "Sportschool Tracker",
+  "short_name": "Sportschool",
+  "description": "Houd je trainingen bij en volg je voortgang",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

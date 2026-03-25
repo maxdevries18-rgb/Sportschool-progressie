@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/exercises", label: "Oefeningen" },
   { href: "/sessions", label: "Sessies" },
   { href: "/progress", label: "Progressie" },
+  { href: "/settings", label: "Instellingen" },
 ];
 
 export function Header() {
@@ -31,7 +33,7 @@ export function Header() {
         </Link>
 
         {/* Desktop navigatie */}
-        <nav className="hidden gap-1 md:flex">
+        <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -45,6 +47,7 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <ThemeToggle />
         </nav>
 
         {/* Mobiel hamburger knop */}
@@ -104,6 +107,9 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <div className="mt-2 border-t border-gray-700 pt-2">
+            <ThemeToggle />
+          </div>
         </nav>
       )}
     </header>

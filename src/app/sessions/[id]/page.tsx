@@ -30,30 +30,40 @@ export default async function SessionDetailPage({
     <div className="mx-auto max-w-6xl">
         <Link
           href="/sessions"
-          className="text-sm text-indigo-600 hover:text-indigo-500"
+          className="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
         >
           &larr; Terug naar sessies
         </Link>
 
         <div className="mt-4 flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Sessie van {formatDate(session.date)}
             </h1>
-            <p className="mt-1 text-gray-500">
+            <p className="mt-1 text-gray-500 dark:text-gray-400">
               Deelnemers: {participants.map((p: { name: string }) => p.name).join(", ")}
             </p>
             {session.notes && (
-              <p className="mt-2 text-sm text-gray-600 italic">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">
                 {session.notes}
               </p>
             )}
           </div>
-          <form action={handleDelete}>
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-700 ring-1 ring-inset ring-red-600/20 transition hover:bg-red-100"
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/sessions/${id}/edit`}
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-600/20 transition hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
             >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+              Bewerken
+            </Link>
+            <form action={handleDelete}>
+              <button
+                type="submit"
+                className="inline-flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-300 ring-1 ring-inset ring-red-600/20 transition hover:bg-red-100 dark:hover:bg-red-900/50"
+              >
               <svg
                 className="h-4 w-4"
                 fill="none"
@@ -68,14 +78,15 @@ export default async function SessionDetailPage({
                 />
               </svg>
               Verwijderen
-            </button>
-          </form>
+              </button>
+            </form>
+          </div>
         </div>
 
         <div className="mt-6 space-y-6">
           {session.sessionExercises.length === 0 ? (
-            <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
-              <p className="text-gray-500">
+            <div className="rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">
+              <p className="text-gray-500 dark:text-gray-400">
                 Er zijn geen oefeningen geregistreerd voor deze sessie.
               </p>
             </div>
@@ -104,10 +115,10 @@ export default async function SessionDetailPage({
                 return (
                   <div
                     key={se.id}
-                    className="rounded-xl bg-white shadow-sm ring-1 ring-gray-200"
+                    className="rounded-xl bg-white dark:bg-gray-900 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
                   >
-                    <div className="border-b border-gray-100 px-5 py-4">
-                      <h2 className="text-lg font-semibold text-gray-900">
+                    <div className="border-b border-gray-100 dark:border-gray-800 px-5 py-4">
+                      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {se.exercise.name}
                       </h2>
                     </div>

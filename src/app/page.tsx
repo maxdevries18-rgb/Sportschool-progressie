@@ -2,9 +2,14 @@ import Link from "next/link";
 import { db } from "@/db";
 import { sessions, sessionParticipants, users, sessionExercises } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getWeekLabel } from "@/lib/utils";
+import { getWeeklyOverview } from "@/lib/queries/weekly";
+import { Badge } from "@/components/ui/badge";
+import { MUSCLE_GROUP_LABELS } from "@/lib/constants";
 
 export default async function DashboardPage() {
+  const weeklyOverview = await getWeeklyOverview(6);
+
   const recentSessions = await db
     .select({
       id: sessions.id,
@@ -39,10 +44,10 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Welkom bij Sportschool Tracker
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
             Houd je trainingen bij en volg je voortgang.
           </p>
         </div>
@@ -69,7 +74,7 @@ export default async function DashboardPage() {
           </Link>
           <Link
             href="/sessions"
-            className="flex flex-col items-center rounded-xl bg-white p-4 text-gray-700 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+            className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-4 text-gray-700 dark:text-gray-300 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <svg
               className="mb-2 h-6 w-6 text-indigo-500"
@@ -88,7 +93,7 @@ export default async function DashboardPage() {
           </Link>
           <Link
             href="/exercises"
-            className="flex flex-col items-center rounded-xl bg-white p-4 text-gray-700 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+            className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-4 text-gray-700 dark:text-gray-300 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <svg
               className="mb-2 h-6 w-6 text-indigo-500"
@@ -107,7 +112,7 @@ export default async function DashboardPage() {
           </Link>
           <Link
             href="/progress"
-            className="flex flex-col items-center rounded-xl bg-white p-4 text-gray-700 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-50"
+            className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-4 text-gray-700 dark:text-gray-300 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <svg
               className="mb-2 h-6 w-6 text-indigo-500"
@@ -126,15 +131,78 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
+        {/* Weekoverzicht */}
+        {weeklyOverview.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Weekoverzicht
+            </h2>
+            <div className="space-y-3">
+              {weeklyOverview.map((week) => {
+                const isCurrentWeek = (() => {
+                  const now = new Date();
+                  const weekStart = new Date(week.weekStart);
+                  const weekEnd = new Date(weekStart);
+                  weekEnd.setDate(weekEnd.getDate() + 6);
+                  return now >= weekStart && now <= weekEnd;
+                })();
+
+                return (
+                  <div
+                    key={week.weekStart}
+                    className={`rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm ring-1 ${
+                      isCurrentWeek
+                        ? "ring-indigo-300 bg-indigo-50/30 dark:bg-indigo-900/20 dark:ring-indigo-700"
+                        : "ring-gray-200 dark:ring-gray-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">
+                          {getWeekLabel(week.weekStart)}
+                          {isCurrentWeek && (
+                            <span className="ml-2 text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                              Deze week
+                            </span>
+                          )}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                          {week.sessionCount}{" "}
+                          {week.sessionCount === 1 ? "sessie" : "sessies"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {week.muscleGroups.map((mg) => (
+                        <Badge
+                          key={mg}
+                          label={
+                            MUSCLE_GROUP_LABELS[
+                              mg as keyof typeof MUSCLE_GROUP_LABELS
+                            ] || mg
+                          }
+                          variant={
+                            mg as "borst" | "rug" | "benen" | "schouders" | "armen" | "core"
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-gray-900">
+          <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-100">
             Recente Sessies
           </h2>
 
           {sessionsWithDetails.length === 0 ? (
-            <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
+            <div className="rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">
               <svg
-                className="mx-auto mb-4 h-12 w-12 text-gray-300"
+                className="mx-auto mb-4 h-12 w-12 text-gray-300 dark:text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
@@ -146,10 +214,10 @@ export default async function DashboardPage() {
                   d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
                 />
               </svg>
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Nog geen sessies
               </h3>
-              <p className="mt-1 text-gray-500">
+              <p className="mt-1 text-gray-500 dark:text-gray-400">
                 Begin met het vastleggen van je eerste training!
               </p>
               <Link
@@ -165,19 +233,19 @@ export default async function DashboardPage() {
                 <Link
                   key={session.id}
                   href={`/sessions/${session.id}`}
-                  className="block rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
+                  className="block rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:shadow-md"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">
                         {formatDate(session.date)}
                       </p>
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         {session.participantNames.join(", ")}
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
+                      <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">
                         {session.exerciseCount}{" "}
                         {session.exerciseCount === 1
                           ? "oefening"
@@ -186,7 +254,7 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                   {session.notes && (
-                    <p className="mt-2 text-sm text-gray-500 line-clamp-1">
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
                       {session.notes}
                     </p>
                   )}
@@ -196,7 +264,7 @@ export default async function DashboardPage() {
               <div className="pt-2 text-center">
                 <Link
                   href="/sessions"
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                  className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
                 >
                   Alle sessies bekijken &rarr;
                 </Link>

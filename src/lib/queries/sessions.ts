@@ -148,6 +148,80 @@ export async function createSession(data: {
   });
 }
 
+export async function updateSession(
+  id: number,
+  data: {
+    date: string;
+    notes?: string;
+    participantIds: number[];
+    exercises: {
+      exerciseId: number;
+      sortOrder: number;
+      sets: {
+        userId: number;
+        setNumber: number;
+        reps: number;
+        weightKg: number;
+      }[];
+    }[];
+  }
+) {
+  return db.transaction(async (tx) => {
+    // 1. Update session date/notes
+    const [session] = await tx
+      .update(schema.sessions)
+      .set({ date: data.date, notes: data.notes })
+      .where(eq(schema.sessions.id, id))
+      .returning();
+
+    if (!session) throw new Error("Sessie niet gevonden");
+
+    // 2. Delete existing exercises (cascades to sets) and participants
+    await tx
+      .delete(schema.sessionExercises)
+      .where(eq(schema.sessionExercises.sessionId, id));
+    await tx
+      .delete(schema.sessionParticipants)
+      .where(eq(schema.sessionParticipants.sessionId, id));
+
+    // 3. Re-insert participants
+    if (data.participantIds.length > 0) {
+      await tx.insert(schema.sessionParticipants).values(
+        data.participantIds.map((userId) => ({
+          sessionId: id,
+          userId,
+        }))
+      );
+    }
+
+    // 4. Re-insert exercises and sets
+    for (const exercise of data.exercises) {
+      const [sessionExercise] = await tx
+        .insert(schema.sessionExercises)
+        .values({
+          sessionId: id,
+          exerciseId: exercise.exerciseId,
+          sortOrder: exercise.sortOrder,
+        })
+        .returning();
+
+      if (exercise.sets.length > 0) {
+        await tx.insert(schema.sets).values(
+          exercise.sets.map((set) => ({
+            sessionExerciseId: sessionExercise.id,
+            userId: set.userId,
+            setNumber: set.setNumber,
+            reps: set.reps,
+            weightKg: set.weightKg,
+          }))
+        );
+      }
+    }
+
+    return session;
+  });
+}
+
 export async function deleteSession(id: number) {
   return db
     .delete(schema.sessions)
