@@ -13,12 +13,12 @@ export default async function ExercisesPage({
   const exercises = await getAllExercises(selectedGroup);
 
   const muscleGroupColors: Record<string, string> = {
-    borst: "bg-red-50 text-red-700 ring-red-600/20",
-    rug: "bg-blue-50 text-blue-700 ring-blue-600/20",
-    benen: "bg-green-50 text-green-700 ring-green-600/20",
-    schouders: "bg-yellow-50 text-yellow-700 ring-yellow-600/20",
-    armen: "bg-purple-50 text-purple-700 ring-purple-600/20",
-    core: "bg-orange-50 text-orange-700 ring-orange-600/20",
+    borst: "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-900/20 dark:text-red-300 dark:ring-red-500/20",
+    rug: "bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-900/20 dark:text-blue-300 dark:ring-blue-500/20",
+    benen: "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/20 dark:text-green-300 dark:ring-green-500/20",
+    schouders: "bg-yellow-50 text-yellow-700 ring-yellow-600/20 dark:bg-yellow-900/20 dark:text-yellow-300 dark:ring-yellow-500/20",
+    armen: "bg-purple-50 text-purple-700 ring-purple-600/20 dark:bg-purple-900/20 dark:text-purple-300 dark:ring-purple-500/20",
+    core: "bg-orange-50 text-orange-700 ring-orange-600/20 dark:bg-orange-900/20 dark:text-orange-300 dark:ring-orange-500/20",
   };
 
   return (
@@ -27,11 +27,11 @@ export default async function ExercisesPage({
           <div>
             <Link
               href="/"
-              className="text-sm text-indigo-600 hover:text-indigo-500"
+              className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
             >
               &larr; Dashboard
             </Link>
-            <h1 className="mt-2 text-3xl font-bold text-gray-900">
+            <h1 className="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
               Oefeningen
             </h1>
           </div>
@@ -40,10 +40,10 @@ export default async function ExercisesPage({
         <div className="mb-6 flex flex-wrap gap-2">
           <Link
             href="/exercises"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 ${
               !selectedGroup
-                ? "bg-indigo-600 text-white"
-                : "bg-white text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50"
+                ? "bg-gradient-to-b from-indigo-500 to-indigo-600 text-white shadow-sm"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             Alle
@@ -52,10 +52,10 @@ export default async function ExercisesPage({
             <Link
               key={group}
               href={`/exercises?muscleGroup=${group}`}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 ${
                 selectedGroup === group
-                  ? "bg-indigo-600 text-white"
-                  : "bg-white text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50"
+                  ? "bg-gradient-to-b from-indigo-500 to-indigo-600 text-white shadow-sm"
+                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
               {MUSCLE_GROUP_LABELS[group as MuscleGroup]}
@@ -64,9 +64,9 @@ export default async function ExercisesPage({
         </div>
 
         {exercises.length === 0 ? (
-          <div className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
+          <div className="rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-sm ring-1 ring-gray-200/60 dark:ring-gray-700/60">
             <svg
-              className="mx-auto mb-4 h-12 w-12 text-gray-300"
+              className="mx-auto mb-4 h-12 w-12 text-gray-300 dark:text-gray-600"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
@@ -78,10 +78,10 @@ export default async function ExercisesPage({
                 d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
               />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
               Geen oefeningen gevonden
             </h3>
-            <p className="mt-1 text-gray-500">
+            <p className="mt-1 text-gray-500 dark:text-gray-400">
               {selectedGroup
                 ? "Er zijn geen oefeningen voor deze spiergroep."
                 : "Er zijn nog geen oefeningen toegevoegd."}
@@ -93,16 +93,16 @@ export default async function ExercisesPage({
               <Link
                 key={exercise.id}
                 href={`/exercises/${exercise.id}`}
-                className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-200 transition hover:shadow-md"
+                className="rounded-xl bg-white dark:bg-gray-900 p-5 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60 transition hover:shadow-[var(--shadow-card-hover)]"
               >
                 <div className="flex items-start justify-between">
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                     {exercise.name}
                   </h3>
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
                       muscleGroupColors[exercise.muscleGroup] ??
-                      "bg-gray-50 text-gray-700 ring-gray-600/20"
+                      "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-600/20"
                     }`}
                   >
                     {MUSCLE_GROUP_LABELS[exercise.muscleGroup as MuscleGroup] ??
@@ -110,7 +110,7 @@ export default async function ExercisesPage({
                   </span>
                 </div>
                 {exercise.description && (
-                  <p className="mt-2 text-sm text-gray-500 line-clamp-2">
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                     {exercise.description}
                   </p>
                 )}

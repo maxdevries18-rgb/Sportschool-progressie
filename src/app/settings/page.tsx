@@ -87,7 +87,7 @@ export default function SettingsPage() {
     <div>
       <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">Instellingen</h1>
 
-      <div className="rounded-lg bg-white dark:bg-gray-900 p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">
+      <div className="rounded-xl bg-white dark:bg-gray-900 p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60">
         <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
           Gebruikers beheren
         </h2>
@@ -118,13 +118,13 @@ export default function SettingsPage() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSave(user.id);
                   }}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-base sm:text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors duration-150 focus:outline-none"
                 />
               </div>
               <button
                 onClick={() => handleSave(user.id)}
                 disabled={saving[user.id]}
-                className="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                className="mt-6 rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
               >
                 {saving[user.id] ? "Opslaan..." : "Opslaan"}
               </button>
@@ -132,8 +132,8 @@ export default function SettingsPage() {
                 <span
                   className={`mt-6 text-sm ${
                     feedback[user.id].type === "success"
-                      ? "text-green-600"
-                      : "text-red-600"
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-red-600 dark:text-red-400"
                   }`}
                 >
                   {feedback[user.id].message}

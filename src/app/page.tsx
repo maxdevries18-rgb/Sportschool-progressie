@@ -55,7 +55,7 @@ export default async function DashboardPage() {
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Link
             href="/sessions/new"
-            className="flex flex-col items-center rounded-xl bg-indigo-600 p-4 text-white shadow-sm transition hover:bg-indigo-700"
+            className="flex flex-col items-center rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 p-4 text-white shadow-sm hover:from-indigo-600 hover:to-indigo-700 hover:shadow-md active:scale-[0.98] transition-all duration-150"
           >
             <svg
               className="mb-2 h-6 w-6"
@@ -222,7 +222,7 @@ export default async function DashboardPage() {
               </p>
               <Link
                 href="/sessions/new"
-                className="mt-4 inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
               >
                 Eerste sessie aanmaken
               </Link>

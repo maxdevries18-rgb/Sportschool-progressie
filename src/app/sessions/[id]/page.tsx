@@ -52,7 +52,7 @@ export default async function SessionDetailPage({
           <div className="flex items-center gap-2">
             <Link
               href={`/sessions/${id}/edit`}
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-600/20 transition hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-600/20 transition-all duration-150 hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
@@ -62,7 +62,7 @@ export default async function SessionDetailPage({
             <form action={handleDelete}>
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-300 ring-1 ring-inset ring-red-600/20 transition hover:bg-red-100 dark:hover:bg-red-900/50"
+                className="inline-flex items-center gap-2 rounded-xl bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-300 ring-1 ring-inset ring-red-600/20 transition-all duration-150 hover:bg-red-100 dark:hover:bg-red-900/50"
               >
               <svg
                 className="h-4 w-4"
@@ -125,7 +125,7 @@ export default async function SessionDetailPage({
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-gray-100 text-left text-gray-500">
+                          <tr className="border-b border-gray-100 dark:border-gray-800 text-left text-gray-500 dark:text-gray-400">
                             <th className="px-5 py-3 font-medium">Set</th>
                             {participants.map((p: { id: number; name: string }) => (
                               <th
@@ -137,7 +137,7 @@ export default async function SessionDetailPage({
                               </th>
                             ))}
                           </tr>
-                          <tr className="border-b border-gray-100 text-xs text-gray-400">
+                          <tr className="border-b border-gray-100 dark:border-gray-800 text-xs text-gray-400 dark:text-gray-500">
                             <th className="px-5 py-2" />
                             {participants.map((p: { id: number; name: string }) => (
                               <React.Fragment key={p.id}>
@@ -158,9 +158,9 @@ export default async function SessionDetailPage({
                           {setNumbers.map((setNum) => (
                             <tr
                               key={setNum}
-                              className="border-b border-gray-50 last:border-0"
+                              className="border-b border-gray-50 dark:border-gray-800 last:border-0 even:bg-gray-50 dark:even:bg-gray-800/50"
                             >
-                              <td className="px-5 py-3 font-medium text-gray-700">
+                              <td className="px-5 py-3 font-medium text-gray-700 dark:text-gray-300">
                                 {setNum}
                               </td>
                               {participants.map((p: { id: number; name: string }) => {
@@ -171,13 +171,13 @@ export default async function SessionDetailPage({
                                 );
                                 return set ? (
                                   <React.Fragment key={p.id}>
-                                    <td className="px-3 py-3 text-center text-gray-700">
+                                    <td className="px-3 py-3 text-center text-gray-700 dark:text-gray-300">
                                       {set.reps}
                                     </td>
-                                    <td className="px-3 py-3 text-center text-gray-700">
+                                    <td className="px-3 py-3 text-center text-gray-700 dark:text-gray-300">
                                       {set.weightKg}
                                     </td>
-                                    <td className="px-3 py-3 text-center font-medium text-indigo-600">
+                                    <td className="px-3 py-3 text-center font-medium text-indigo-600 dark:text-indigo-400">
                                       {calculateVolume(
                                         set.reps,
                                         set.weightKg
@@ -186,13 +186,13 @@ export default async function SessionDetailPage({
                                   </React.Fragment>
                                 ) : (
                                   <React.Fragment key={p.id}>
-                                    <td className="px-3 py-3 text-center text-gray-300">
+                                    <td className="px-3 py-3 text-center text-gray-300 dark:text-gray-600">
                                       -
                                     </td>
-                                    <td className="px-3 py-3 text-center text-gray-300">
+                                    <td className="px-3 py-3 text-center text-gray-300 dark:text-gray-600">
                                       -
                                     </td>
-                                    <td className="px-3 py-3 text-center text-gray-300">
+                                    <td className="px-3 py-3 text-center text-gray-300 dark:text-gray-600">
                                       -
                                     </td>
                                   </React.Fragment>

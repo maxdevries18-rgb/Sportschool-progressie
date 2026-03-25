@@ -7,7 +7,7 @@ interface CardProps {
 export function Card({ children, className = "", onClick }: CardProps) {
   return (
     <div
-      className={`rounded-lg bg-white dark:bg-gray-900 p-6 shadow-md dark:ring-1 dark:ring-gray-700 ${onClick ? "cursor-pointer transition-shadow hover:shadow-lg" : ""} ${className}`}
+      className={`rounded-xl bg-white dark:bg-gray-900 p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60 ${onClick ? "cursor-pointer hover:shadow-[var(--shadow-card-hover)] transition-shadow" : ""} ${className}`}
       onClick={onClick}
     >
       {children}
