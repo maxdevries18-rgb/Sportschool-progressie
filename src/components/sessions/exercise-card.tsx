@@ -20,12 +20,14 @@ interface ExerciseCardProps {
     }[];
   };
   participants: { userId: number; user: { id: number; name: string } }[];
+  onDelete?: (id: number) => void;
 }
 
 export function ExerciseCard({
   sessionId,
   sessionExercise,
   participants,
+  onDelete,
 }: ExerciseCardProps) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
@@ -40,6 +42,7 @@ export function ExerciseCard({
         { method: "DELETE" }
       );
       if (res.ok) {
+        onDelete?.(sessionExercise.id);
         router.refresh();
       }
     } catch {

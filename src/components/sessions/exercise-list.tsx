@@ -49,10 +49,12 @@ function SortableExercise({
   sessionId,
   sessionExercise,
   participants,
+  onDelete,
 }: {
   sessionId: number;
   sessionExercise: SessionExercise;
   participants: Participant[];
+  onDelete: (id: number) => void;
 }) {
   const {
     attributes,
@@ -75,6 +77,7 @@ function SortableExercise({
         sessionId={sessionId}
         sessionExercise={sessionExercise}
         participants={participants}
+        onDelete={onDelete}
       />
     </div>
   );
@@ -87,6 +90,10 @@ export function ExerciseList({
 }: ExerciseListProps) {
   const router = useRouter();
   const [exercises, setExercises] = useState(sessionExercises);
+
+  const handleDelete = (id: number) => {
+    setExercises((prev) => prev.filter((e) => e.id !== id));
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -134,6 +141,7 @@ export function ExerciseList({
               sessionId={sessionId}
               sessionExercise={se}
               participants={participants}
+              onDelete={handleDelete}
             />
           ))}
         </div>
