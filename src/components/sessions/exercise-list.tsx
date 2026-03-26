@@ -23,7 +23,7 @@ import { ExerciseCard } from "./exercise-card";
 interface SessionExercise {
   id: number;
   sortOrder: number;
-  exercise: { id: number; name: string; muscleGroup: string };
+  exercise: { id: number; name: string; muscleGroup: string; imageUrl: string | null };
   sets: {
     id: number;
     userId: number;
