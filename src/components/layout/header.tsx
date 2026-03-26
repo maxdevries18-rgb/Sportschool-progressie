@@ -10,6 +10,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/exercises", label: "Oefeningen" },
   { href: "/sessions", label: "Sessies" },
+  { href: "/schemas", label: "Schema's" },
   { href: "/progress", label: "Progressie" },
   { href: "/settings", label: "Instellingen" },
 ];
