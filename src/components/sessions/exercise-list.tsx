@@ -1,7 +1,23 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { ExerciseCard } from "./exercise-card";
 
 interface SessionExercise {
@@ -29,6 +45,41 @@ interface ExerciseListProps {
   participants: Participant[];
 }
 
+function SortableExercise({
+  sessionId,
+  sessionExercise,
+  participants,
+}: {
+  sessionId: number;
+  sessionExercise: SessionExercise;
+  participants: Participant[];
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: sessionExercise.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-none">
+      <ExerciseCard
+        sessionId={sessionId}
+        sessionExercise={sessionExercise}
+        participants={participants}
+      />
+    </div>
+  );
+}
+
 export function ExerciseList({
   sessionId,
   sessionExercises,
@@ -36,26 +87,26 @@ export function ExerciseList({
 }: ExerciseListProps) {
   const router = useRouter();
   const [exercises, setExercises] = useState(sessionExercises);
-  const dragIndex = useRef<number | null>(null);
 
-  const handleDragStart = (index: number) => {
-    dragIndex.current = index;
-  };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
+    }),
+  );
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    if (dragIndex.current === null || dragIndex.current === index) return;
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    const updated = [...exercises];
-    const [moved] = updated.splice(dragIndex.current, 1);
-    updated.splice(index, 0, moved);
-    dragIndex.current = index;
+    const oldIndex = exercises.findIndex((e) => e.id === active.id);
+    const newIndex = exercises.findIndex((e) => e.id === over.id);
+    const updated = arrayMove(exercises, oldIndex, newIndex);
     setExercises(updated);
-  };
 
-  const handleDrop = async () => {
-    const orders = exercises.map((ex, i) => ({ id: ex.id, sortOrder: i }));
-    dragIndex.current = null;
+    const orders = updated.map((ex, i) => ({ id: ex.id, sortOrder: i }));
 
     await fetch(`/api/sessions/${sessionId}/exercises`, {
       method: "PATCH",
@@ -67,23 +118,26 @@ export function ExerciseList({
   };
 
   return (
-    <div className="space-y-4">
-      {exercises.map((se, index) => (
-        <div
-          key={se.id}
-          draggable
-          onDragStart={() => handleDragStart(index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDrop={handleDrop}
-          className="cursor-grab active:cursor-grabbing"
-        >
-          <ExerciseCard
-            sessionId={sessionId}
-            sessionExercise={se}
-            participants={participants}
-          />
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={exercises.map((e) => e.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="space-y-4">
+          {exercises.map((se) => (
+            <SortableExercise
+              key={se.id}
+              sessionId={sessionId}
+              sessionExercise={se}
+              participants={participants}
+            />
+          ))}
         </div>
-      ))}
-    </div>
+      </SortableContext>
+    </DndContext>
   );
 }
