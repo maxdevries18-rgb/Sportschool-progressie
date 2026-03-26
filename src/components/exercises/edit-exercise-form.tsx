@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MUSCLE_GROUPS, MUSCLE_GROUP_LABELS } from "@/lib/constants";
-import type { MuscleGroup } from "@/lib/constants";
+import {
+  MUSCLE_GROUPS,
+  MUSCLE_GROUP_LABELS,
+  EQUIPMENT_TYPES,
+  EQUIPMENT_LABELS,
+  LEVEL_TYPES,
+  LEVEL_LABELS,
+} from "@/lib/constants";
+import type { MuscleGroup, Equipment, Level } from "@/lib/constants";
 
 interface EditExerciseFormProps {
   exercise: {
@@ -11,6 +18,8 @@ interface EditExerciseFormProps {
     name: string;
     muscleGroup: string;
     description: string | null;
+    equipment: string | null;
+    level: string | null;
   };
 }
 
@@ -20,6 +29,8 @@ export function EditExerciseForm({ exercise }: EditExerciseFormProps) {
   const [name, setName] = useState(exercise.name);
   const [muscleGroup, setMuscleGroup] = useState(exercise.muscleGroup);
   const [description, setDescription] = useState(exercise.description ?? "");
+  const [equipment, setEquipment] = useState(exercise.equipment ?? "");
+  const [level, setLevel] = useState(exercise.level ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,6 +39,8 @@ export function EditExerciseForm({ exercise }: EditExerciseFormProps) {
     setName(exercise.name);
     setMuscleGroup(exercise.muscleGroup);
     setDescription(exercise.description ?? "");
+    setEquipment(exercise.equipment ?? "");
+    setLevel(exercise.level ?? "");
     setError("");
   };
 
@@ -42,7 +55,7 @@ export function EditExerciseForm({ exercise }: EditExerciseFormProps) {
       const res = await fetch(`/api/exercises/${exercise.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, muscleGroup, description }),
+        body: JSON.stringify({ name, muscleGroup, description, equipment, level }),
       });
 
       if (!res.ok) {
@@ -109,6 +122,43 @@ export function EditExerciseForm({ exercise }: EditExerciseFormProps) {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Equipment
+          </label>
+          <select
+            value={equipment}
+            onChange={(e) => setEquipment(e.target.value)}
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+          >
+            <option value="">Geen</option>
+            {EQUIPMENT_TYPES.map((eq) => (
+              <option key={eq} value={eq}>
+                {EQUIPMENT_LABELS[eq as Equipment]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Niveau
+          </label>
+          <select
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+          >
+            <option value="">Geen</option>
+            {LEVEL_TYPES.map((lv) => (
+              <option key={lv} value={lv}>
+                {LEVEL_LABELS[lv as Level]}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div>

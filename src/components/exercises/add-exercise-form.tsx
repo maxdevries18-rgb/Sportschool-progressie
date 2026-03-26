@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MUSCLE_GROUPS, MUSCLE_GROUP_LABELS } from "@/lib/constants";
-import type { MuscleGroup } from "@/lib/constants";
+import {
+  MUSCLE_GROUPS,
+  MUSCLE_GROUP_LABELS,
+  EQUIPMENT_TYPES,
+  EQUIPMENT_LABELS,
+  LEVEL_TYPES,
+  LEVEL_LABELS,
+} from "@/lib/constants";
+import type { MuscleGroup, Equipment, Level } from "@/lib/constants";
 
 export function AddExerciseForm() {
   const router = useRouter();
@@ -11,6 +18,8 @@ export function AddExerciseForm() {
   const [name, setName] = useState("");
   const [muscleGroup, setMuscleGroup] = useState<string>(MUSCLE_GROUPS[0]);
   const [description, setDescription] = useState("");
+  const [equipment, setEquipment] = useState("");
+  const [level, setLevel] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -18,6 +27,8 @@ export function AddExerciseForm() {
     setIsOpen(false);
     setName("");
     setDescription("");
+    setEquipment("");
+    setLevel("");
     setError("");
   };
 
@@ -32,7 +43,7 @@ export function AddExerciseForm() {
       const res = await fetch("/api/exercises", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, muscleGroup, description }),
+        body: JSON.stringify({ name, muscleGroup, description, equipment, level }),
       });
 
       if (!res.ok) {
@@ -113,6 +124,43 @@ export function AddExerciseForm() {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Equipment (optioneel)
+          </label>
+          <select
+            value={equipment}
+            onChange={(e) => setEquipment(e.target.value)}
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+          >
+            <option value="">Geen</option>
+            {EQUIPMENT_TYPES.map((eq) => (
+              <option key={eq} value={eq}>
+                {EQUIPMENT_LABELS[eq as Equipment]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Niveau (optioneel)
+          </label>
+          <select
+            value={level}
+            onChange={(e) => setLevel(e.target.value)}
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+          >
+            <option value="">Geen</option>
+            {LEVEL_TYPES.map((lv) => (
+              <option key={lv} value={lv}>
+                {LEVEL_LABELS[lv as Level]}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div>

@@ -5,8 +5,10 @@ import { getAllExercises, createExercise } from "@/lib/queries/exercises";
 export async function GET(request: NextRequest) {
   try {
     const muscleGroup = request.nextUrl.searchParams.get("muscleGroup") ?? undefined;
-    const exercises = await getAllExercises(muscleGroup);
-    return NextResponse.json(exercises);
+    const search = request.nextUrl.searchParams.get("search") ?? undefined;
+    const page = parseInt(request.nextUrl.searchParams.get("page") ?? "1", 10) || 1;
+    const result = await getAllExercises(muscleGroup, search, page);
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Fout bij ophalen oefeningen:", error);
     return NextResponse.json(
@@ -19,7 +21,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, muscleGroup, description } = body;
+    const { name, muscleGroup, description, equipment, level } = body;
 
     if (!name?.trim() || !muscleGroup) {
       return NextResponse.json(
@@ -32,6 +34,8 @@ export async function POST(request: Request) {
       name: name.trim(),
       muscleGroup,
       description: description?.trim() || undefined,
+      equipment: equipment || undefined,
+      level: level || undefined,
     });
 
     revalidatePath("/exercises");

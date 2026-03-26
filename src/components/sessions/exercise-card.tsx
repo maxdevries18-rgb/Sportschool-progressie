@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 
@@ -8,7 +9,7 @@ interface ExerciseCardProps {
   sessionId: number;
   sessionExercise: {
     id: number;
-    exercise: { id: number; name: string; muscleGroup: string };
+    exercise: { id: number; name: string; muscleGroup: string; imageUrl: string | null };
     sets: {
       id: number;
       userId: number;
@@ -56,6 +57,16 @@ export function ExerciseCard({
     <div className="bg-white dark:bg-gray-900 rounded-xl ring-1 ring-gray-200/60 dark:ring-gray-700/60 shadow-[var(--shadow-card)] p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
+          {sessionExercise.exercise.imageUrl && (
+            <Image
+              src={sessionExercise.exercise.imageUrl}
+              alt={sessionExercise.exercise.name}
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-lg object-cover shrink-0"
+              unoptimized
+            />
+          )}
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
             {sessionExercise.exercise.name}
           </h3>

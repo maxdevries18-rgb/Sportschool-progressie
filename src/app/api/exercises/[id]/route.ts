@@ -21,7 +21,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, muscleGroup, description } = body;
+    const { name, muscleGroup, description, equipment, level } = body;
 
     if (!name?.trim() || !muscleGroup) {
       return NextResponse.json(
@@ -34,6 +34,8 @@ export async function PUT(
       name: name.trim(),
       muscleGroup,
       description: description?.trim() || undefined,
+      equipment: equipment || undefined,
+      level: level || undefined,
     });
 
     revalidatePath("/exercises");

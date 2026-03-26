@@ -24,8 +24,17 @@ export const users = pgTable("users", {
 export const exercises = pgTable("exercises", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
+  nameEn: text("name_en"),
   description: text("description"),
   muscleGroup: text("muscle_group").notNull(),
+  secondaryMuscleGroups: text("secondary_muscle_groups"),
+  equipment: text("equipment"),
+  level: text("level"),
+  force: text("force"),
+  imageUrl: text("image_url"),
+  imageUrl2: text("image_url_2"),
+  isCustom: integer("is_custom").default(0).notNull(),
+  externalId: text("external_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
