@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useCurrentUser } from "@/contexts/user-context";
 import {
   LineChart,
   Line,
@@ -41,6 +42,7 @@ interface PersonalRecord {
 }
 
 export default function ProgressPage() {
+  const { currentUserId } = useCurrentUser();
   const [users, setUsers] = useState<User[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
@@ -49,6 +51,12 @@ export default function ProgressPage() {
   const [personalRecords, setPersonalRecords] = useState<PersonalRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    if (currentUserId) {
+      setSelectedUserId(currentUserId);
+    }
+  }, [currentUserId]);
 
   useEffect(() => {
     fetch("/api/users")

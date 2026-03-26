@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useCurrentUser } from "@/contexts/user-context";
 
 interface User {
   id: number;
@@ -8,7 +9,11 @@ interface User {
 }
 
 export default function SettingsPage() {
+  const { currentUserName, clearUser } = useCurrentUser();
   const [users, setUsers] = useState<User[]>([]);
+  const [newUserName, setNewUserName] = useState("");
+  const [creatingUser, setCreatingUser] = useState(false);
+  const [createError, setCreateError] = useState("");
   const [editNames, setEditNames] = useState<Record<number, string>>({});
   const [saving, setSaving] = useState<Record<number, boolean>>({});
   const [feedback, setFeedback] = useState<Record<number, { type: "success" | "error"; message: string }>>({});
@@ -142,6 +147,75 @@ export default function SettingsPage() {
             </div>
           ))}
         </div>
+
+        <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+          <h3 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Nieuwe gebruiker aanmaken
+          </h3>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!newUserName.trim()) return;
+              setCreatingUser(true);
+              setCreateError("");
+              try {
+                const res = await fetch("/api/users", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ name: newUserName.trim() }),
+                });
+                if (!res.ok) {
+                  const data = await res.json();
+                  setCreateError(data.error || "Kon gebruiker niet aanmaken.");
+                  return;
+                }
+                const newUser = await res.json();
+                setUsers((prev) => [...prev, newUser]);
+                setEditNames((prev) => ({ ...prev, [newUser.id]: newUser.name }));
+                setNewUserName("");
+              } catch {
+                setCreateError("Kon gebruiker niet aanmaken.");
+              } finally {
+                setCreatingUser(false);
+              }
+            }}
+            className="flex gap-2"
+          >
+            <input
+              type="text"
+              value={newUserName}
+              onChange={(e) => setNewUserName(e.target.value)}
+              placeholder="Naam"
+              className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-base sm:text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors duration-150 focus:outline-none"
+              disabled={creatingUser}
+            />
+            <button
+              type="submit"
+              disabled={creatingUser || !newUserName.trim()}
+              className="rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            >
+              {creatingUser ? "..." : "Aanmaken"}
+            </button>
+          </form>
+          {createError && (
+            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{createError}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-xl bg-white dark:bg-gray-900 p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Account
+        </h2>
+        <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+          Je bent ingelogd als <span className="font-medium text-gray-900 dark:text-gray-100">{currentUserName}</span>.
+        </p>
+        <button
+          onClick={clearUser}
+          className="rounded-xl bg-gray-100 dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        >
+          Wissel van gebruiker
+        </button>
       </div>
     </div>
   );

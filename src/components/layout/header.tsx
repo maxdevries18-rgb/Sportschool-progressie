@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
+import { useCurrentUser } from "@/contexts/user-context";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -16,6 +17,7 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { currentUserName, currentUserId, clearUser } = useCurrentUser();
 
   function isActive(href: string) {
     if (href === "/") return pathname === "/";
@@ -48,6 +50,18 @@ export function Header() {
             </Link>
           ))}
           <ThemeToggle />
+          {currentUserId && (
+            <button
+              onClick={clearUser}
+              className="ml-2 flex items-center gap-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              title="Wissel van gebruiker"
+            >
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                {currentUserName?.charAt(0).toUpperCase()}
+              </span>
+              {currentUserName}
+            </button>
+          )}
         </nav>
 
         {/* Mobiel hamburger knop */}
@@ -107,8 +121,19 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <div className="mt-2 border-t border-gray-200 dark:border-gray-700 pt-2">
+          <div className="mt-2 border-t border-gray-200 dark:border-gray-700 pt-2 flex items-center justify-between">
             <ThemeToggle />
+            {currentUserId && (
+              <button
+                onClick={() => { clearUser(); setMenuOpen(false); }}
+                className="flex items-center gap-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                  {currentUserName?.charAt(0).toUpperCase()}
+                </span>
+                {currentUserName}
+              </button>
+            )}
           </div>
         </nav>
       )}

@@ -11,14 +11,20 @@ export interface WeekOverview {
 }
 
 export async function getWeeklyOverview(
-  weeksBack: number = 6
+  weeksBack: number = 6,
+  userId?: number
 ): Promise<WeekOverview[]> {
+  const userJoin = userId
+    ? sql`JOIN ${schema.sessionParticipants} ON ${schema.sessionParticipants.sessionId} = ${schema.sessions.id} AND ${schema.sessionParticipants.userId} = ${userId}`
+    : sql``;
+
   const rows = await db.execute(sql`
     SELECT
       date_trunc('week', ${schema.sessions.date}::timestamp)::date::text as week_start,
       COUNT(DISTINCT ${schema.sessions.id})::int as session_count,
       ARRAY_AGG(DISTINCT ${schema.exercises.muscleGroup}) as muscle_groups
     FROM ${schema.sessions}
+    ${userJoin}
     JOIN ${schema.sessionExercises} ON ${schema.sessionExercises.sessionId} = ${schema.sessions.id}
     JOIN ${schema.exercises} ON ${schema.exercises.id} = ${schema.sessionExercises.exerciseId}
     WHERE ${schema.sessions.date} >= (CURRENT_DATE - ${sql.raw(`interval '${weeksBack} weeks'`)})

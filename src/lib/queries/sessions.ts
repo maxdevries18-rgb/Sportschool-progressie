@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 import * as schema from "@/db/schema";
 
 export async function getAllSessions() {
@@ -30,6 +30,76 @@ export async function getAllSessions() {
     .orderBy(desc(schema.sessions.date));
 
   // Fetch participants for each session in one query
+  const sessionIds = rows.map((r) => r.id);
+  if (sessionIds.length === 0) return [];
+
+  const participants = await db
+    .select({
+      sessionId: schema.sessionParticipants.sessionId,
+      userId: schema.users.id,
+      userName: schema.users.name,
+    })
+    .from(schema.sessionParticipants)
+    .innerJoin(
+      schema.users,
+      eq(schema.sessionParticipants.userId, schema.users.id)
+    )
+    .where(
+      sql`${schema.sessionParticipants.sessionId} in ${sessionIds}`
+    );
+
+  const participantMap = new Map<
+    number,
+    { userId: number; userName: string }[]
+  >();
+  for (const p of participants) {
+    if (!participantMap.has(p.sessionId)) {
+      participantMap.set(p.sessionId, []);
+    }
+    participantMap.get(p.sessionId)!.push({
+      userId: p.userId,
+      userName: p.userName,
+    });
+  }
+
+  return rows.map((row) => ({
+    ...row,
+    participants: participantMap.get(row.id) ?? [],
+  }));
+}
+
+export async function getSessionsByUser(userId: number) {
+  const rows = await db
+    .select({
+      id: schema.sessions.id,
+      date: schema.sessions.date,
+      notes: schema.sessions.notes,
+      createdAt: schema.sessions.createdAt,
+      exerciseCount:
+        sql<number>`count(distinct ${schema.sessionExercises.id})`.as(
+          "exercise_count"
+        ),
+    })
+    .from(schema.sessions)
+    .innerJoin(
+      schema.sessionParticipants,
+      and(
+        eq(schema.sessionParticipants.sessionId, schema.sessions.id),
+        eq(schema.sessionParticipants.userId, userId)
+      )
+    )
+    .leftJoin(
+      schema.sessionExercises,
+      eq(schema.sessionExercises.sessionId, schema.sessions.id)
+    )
+    .groupBy(
+      schema.sessions.id,
+      schema.sessions.date,
+      schema.sessions.notes,
+      schema.sessions.createdAt
+    )
+    .orderBy(desc(schema.sessions.date));
+
   const sessionIds = rows.map((r) => r.id);
   if (sessionIds.length === 0) return [];
 

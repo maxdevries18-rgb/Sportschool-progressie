@@ -1,11 +1,41 @@
+"use client";
+
 import Link from "next/link";
-import { getAllSessions } from "@/lib/queries/sessions";
+import { useState, useEffect } from "react";
+import { useCurrentUser } from "@/contexts/user-context";
 import { formatDate } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+interface Session {
+  id: number;
+  date: string;
+  notes: string | null;
+  exerciseCount: number;
+  participants: { userId: number; userName: string }[];
+}
 
-export default async function SessionsPage() {
-  const sessions = await getAllSessions();
+export default function SessionsPage() {
+  const { currentUserId } = useCurrentUser();
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    async function fetchSessions() {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/sessions?userId=${currentUserId}`);
+        const data = await res.json();
+        setSessions(data);
+      } catch (error) {
+        console.error("Fout bij laden sessies:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSessions();
+  }, [currentUserId]);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -40,7 +70,11 @@ export default async function SessionsPage() {
           </Link>
         </div>
 
-        {sessions.length === 0 ? (
+        {loading ? (
+          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+            Laden...
+          </div>
+        ) : sessions.length === 0 ? (
           <div className="rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">
             <svg
               className="mx-auto mb-4 h-12 w-12 text-gray-300 dark:text-gray-500"

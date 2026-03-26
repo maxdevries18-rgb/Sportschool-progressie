@@ -1,10 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { getAllSessions, createSession } from "@/lib/queries/sessions";
+import { getAllSessions, getSessionsByUser, createSession } from "@/lib/queries/sessions";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const sessions = await getAllSessions();
+    const userId = request.nextUrl.searchParams.get("userId");
+    const sessions = userId
+      ? await getSessionsByUser(Number(userId))
+      : await getAllSessions();
     return NextResponse.json(sessions);
   } catch (error) {
     console.error("Fout bij ophalen sessies:", error);

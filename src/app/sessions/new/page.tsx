@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useCurrentUser } from "@/contexts/user-context";
 
 interface User {
   id: number;
@@ -11,6 +12,7 @@ interface User {
 
 export default function NewSessionPage() {
   const router = useRouter();
+  const { currentUserId } = useCurrentUser();
   const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -23,10 +25,10 @@ export default function NewSessionPage() {
       .then((r) => r.json())
       .then((data) => {
         setAllUsers(data);
-        setSelectedUserIds(data.map((u: User) => u.id));
+        setSelectedUserIds(currentUserId ? [currentUserId] : []);
       })
       .catch(() => {});
-  }, []);
+  }, [currentUserId]);
 
   const toggleUser = (userId: number) => {
     setSelectedUserIds((prev) =>
