@@ -3,8 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { getSessionById, deleteSession } from "@/lib/queries/sessions";
 import { revalidatePath } from "next/cache";
 import { formatDate } from "@/lib/utils";
-import { ExerciseCard } from "@/components/sessions/exercise-card";
+import { ExerciseList } from "@/components/sessions/exercise-list";
 import { AddExerciseForm } from "@/components/sessions/add-exercise-form";
+import { DuplicateButton } from "@/components/sessions/duplicate-button";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +74,7 @@ export default async function SessionDetailPage({
             >
               ✏️ Bewerken
             </Link>
+            <DuplicateButton sessionId={session.id} />
             <form action={handleDelete}>
               <button
                 type="submit"
@@ -102,27 +104,11 @@ export default async function SessionDetailPage({
             </p>
           </div>
         ) : (
-          session.sessionExercises.map(
-            (se: {
-              id: number;
-              exercise: { id: number; name: string; muscleGroup: string };
-              sets: {
-                id: number;
-                userId: number;
-                setNumber: number;
-                reps: number;
-                weightKg: number;
-                user: { id: number; name: string };
-              }[];
-            }) => (
-              <ExerciseCard
-                key={se.id}
-                sessionId={session.id}
-                sessionExercise={se}
-                participants={session.participants}
-              />
-            )
-          )
+          <ExerciseList
+            sessionId={session.id}
+            sessionExercises={session.sessionExercises}
+            participants={session.participants}
+          />
         )}
 
         <AddExerciseForm

@@ -4,6 +4,103 @@ import { db } from "@/db";
 import { eq, desc, sql, and } from "drizzle-orm";
 import * as schema from "@/db/schema";
 
+export async function updateExerciseSortOrders(
+  orders: { id: number; sortOrder: number }[]
+) {
+  return db.transaction(async (tx) => {
+    for (const { id, sortOrder } of orders) {
+      await tx
+        .update(schema.sessionExercises)
+        .set({ sortOrder })
+        .where(eq(schema.sessionExercises.id, id));
+    }
+  });
+}
+
+export async function duplicateSession(sessionId: number) {
+  const original = await getSessionById(sessionId);
+  if (!original) throw new Error("Sessie niet gevonden");
+
+  const today = new Date().toISOString().split("T")[0];
+
+  return db.transaction(async (tx) => {
+    const [newSession] = await tx
+      .insert(schema.sessions)
+      .values({ date: today, notes: original.notes ?? undefined })
+      .returning();
+
+    if (original.participants.length > 0) {
+      await tx.insert(schema.sessionParticipants).values(
+        original.participants.map((p) => ({
+          sessionId: newSession.id,
+          userId: p.userId,
+        }))
+      );
+    }
+
+    for (const se of original.sessionExercises) {
+      await tx.insert(schema.sessionExercises).values({
+        sessionId: newSession.id,
+        exerciseId: se.exercise.id,
+        sortOrder: se.sortOrder,
+      });
+    }
+
+    return newSession;
+  });
+}
+
+export async function getLastExerciseSets(
+  exerciseId: number,
+  userIds: number[]
+) {
+  if (userIds.length === 0) return [];
+
+  const lastSessionRow = await db
+    .select({ sessionId: schema.sessionExercises.sessionId })
+    .from(schema.sessionExercises)
+    .innerJoin(
+      schema.sessions,
+      eq(schema.sessionExercises.sessionId, schema.sessions.id)
+    )
+    .where(eq(schema.sessionExercises.exerciseId, exerciseId))
+    .orderBy(desc(schema.sessions.date))
+    .limit(1);
+
+  if (lastSessionRow.length === 0) return [];
+
+  const seRow = await db
+    .select({ id: schema.sessionExercises.id })
+    .from(schema.sessionExercises)
+    .where(
+      and(
+        eq(schema.sessionExercises.sessionId, lastSessionRow[0].sessionId),
+        eq(schema.sessionExercises.exerciseId, exerciseId)
+      )
+    )
+    .limit(1);
+
+  if (seRow.length === 0) return [];
+
+  const sets = await db
+    .select({
+      userId: schema.sets.userId,
+      setNumber: schema.sets.setNumber,
+      reps: schema.sets.reps,
+      weightKg: schema.sets.weightKg,
+    })
+    .from(schema.sets)
+    .where(
+      and(
+        eq(schema.sets.sessionExerciseId, seRow[0].id),
+        sql`${schema.sets.userId} in ${userIds}`
+      )
+    )
+    .orderBy(schema.sets.userId, schema.sets.setNumber);
+
+  return sets;
+}
+
 export async function getAllSessions() {
   const rows = await db
     .select({

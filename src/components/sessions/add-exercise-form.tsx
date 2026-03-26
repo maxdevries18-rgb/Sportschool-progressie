@@ -18,6 +18,7 @@ interface AddExerciseFormProps {
 }
 
 type SetData = { reps: string; weightKg: string };
+type PrevSet = { setNumber: number; reps: number; weightKg: number };
 
 export function AddExerciseForm({
   sessionId,
@@ -30,7 +31,9 @@ export function AddExerciseForm({
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [search, setSearch] = useState("");
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [numSets, setNumSets] = useState(3);
   const [sets, setSets] = useState<Record<number, SetData[]>>({});
+  const [prevSets, setPrevSets] = useState<Record<number, PrevSet[]>>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -41,14 +44,10 @@ export function AddExerciseForm({
       .catch(() => {});
   }, []);
 
-  const initSets = () => {
+  const initSets = (count: number) => {
     const initial: Record<number, SetData[]> = {};
     participantIds.forEach((uid) => {
-      initial[uid] = [
-        { reps: "", weightKg: "" },
-        { reps: "", weightKg: "" },
-        { reps: "", weightKg: "" },
-      ];
+      initial[uid] = Array.from({ length: count }, () => ({ reps: "", weightKg: "" }));
     });
     setSets(initial);
   };
@@ -58,7 +57,9 @@ export function AddExerciseForm({
     setSelectedExercise(null);
     setSearch("");
     setError("");
-    initSets();
+    setNumSets(3);
+    setPrevSets({});
+    initSets(3);
   };
 
   const handleCancel = () => {
@@ -66,11 +67,31 @@ export function AddExerciseForm({
     setSelectedExercise(null);
     setSearch("");
     setError("");
+    setPrevSets({});
   };
 
-  const handleSelectExercise = (exercise: Exercise) => {
+  const handleSelectExercise = async (exercise: Exercise) => {
     setSelectedExercise(exercise);
     setSearch("");
+
+    // Haal vorige sessie data op
+    const userIdsParam = participantIds.join(",");
+    try {
+      const res = await fetch(
+        `/api/exercises/last-sets?exerciseId=${exercise.id}&userIds=${userIdsParam}`
+      );
+      if (res.ok) {
+        const data: { userId: number; setNumber: number; reps: number; weightKg: number }[] = await res.json();
+        const grouped: Record<number, PrevSet[]> = {};
+        for (const s of data) {
+          if (!grouped[s.userId]) grouped[s.userId] = [];
+          grouped[s.userId].push({ setNumber: s.setNumber, reps: s.reps, weightKg: s.weightKg });
+        }
+        setPrevSets(grouped);
+      }
+    } catch {
+      // geen vorige data, geen probleem
+    }
   };
 
   const updateSet = (userId: number, setIndex: number, field: "reps" | "weightKg", value: string) => {
@@ -82,6 +103,29 @@ export function AddExerciseForm({
     });
   };
 
+  const addSet = () => {
+    setNumSets((n) => n + 1);
+    setSets((prev) => {
+      const updated = { ...prev };
+      participantIds.forEach((uid) => {
+        updated[uid] = [...(updated[uid] ?? []), { reps: "", weightKg: "" }];
+      });
+      return updated;
+    });
+  };
+
+  const removeSet = () => {
+    if (numSets <= 1) return;
+    setNumSets((n) => n - 1);
+    setSets((prev) => {
+      const updated = { ...prev };
+      participantIds.forEach((uid) => {
+        updated[uid] = updated[uid].slice(0, -1);
+      });
+      return updated;
+    });
+  };
+
   const handleSave = async () => {
     if (!selectedExercise) return;
     setSaving(true);
@@ -89,7 +133,7 @@ export function AddExerciseForm({
 
     const allSets: { userId: number; setNumber: number; reps: number; weightKg: number }[] = [];
     for (const userId of participantIds) {
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < numSets; i++) {
         const s = sets[userId]?.[i];
         if (s && s.reps && s.weightKg) {
           allSets.push({
@@ -246,7 +290,7 @@ export function AddExerciseForm({
                 </tr>
               </thead>
               <tbody>
-                {[0, 1, 2].map((setIdx) => (
+                {Array.from({ length: numSets }, (_, setIdx) => (
                   <tr
                     key={setIdx}
                     className="border-b border-gray-100 dark:border-gray-800 last:border-0"
@@ -254,35 +298,68 @@ export function AddExerciseForm({
                     <td className="py-2 pr-2 text-gray-500 dark:text-gray-400 font-medium">
                       {setIdx + 1}
                     </td>
-                    {participantIds.map((uid) => (
-                      <React.Fragment key={uid}>
-                        <td className="py-2 px-1">
-                          <input
-                            type="number"
-                            inputMode="numeric"
-                            min="0"
-                            placeholder="0"
-                            value={sets[uid]?.[setIdx]?.reps ?? ""}
-                            onChange={(e) => updateSet(uid, setIdx, "reps", e.target.value)}
-                            className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
-                          />
-                        </td>
-                        <td className="py-2 px-1">
-                          <input
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="0"
-                            value={sets[uid]?.[setIdx]?.weightKg ?? ""}
-                            onChange={(e) => updateSet(uid, setIdx, "weightKg", e.target.value)}
-                            className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
-                          />
-                        </td>
-                      </React.Fragment>
-                    ))}
+                    {participantIds.map((uid) => {
+                      const prev = prevSets[uid]?.find((s) => s.setNumber === setIdx + 1);
+                      return (
+                        <React.Fragment key={uid}>
+                          <td className="py-2 px-1">
+                            <input
+                              type="number"
+                              inputMode="numeric"
+                              min="0"
+                              placeholder={prev ? String(prev.reps) : "0"}
+                              value={sets[uid]?.[setIdx]?.reps ?? ""}
+                              onChange={(e) => updateSet(uid, setIdx, "reps", e.target.value)}
+                              className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+                            />
+                            {prev && (
+                              <div className="text-center text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                                v: {prev.reps}
+                              </div>
+                            )}
+                          </td>
+                          <td className="py-2 px-1">
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              placeholder={prev ? String(prev.weightKg) : "0"}
+                              value={sets[uid]?.[setIdx]?.weightKg ?? ""}
+                              onChange={(e) => updateSet(uid, setIdx, "weightKg", e.target.value)}
+                              className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+                            />
+                            {prev && (
+                              <div className="text-center text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                                v: {prev.weightKg}
+                              </div>
+                            )}
+                          </td>
+                        </React.Fragment>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Set beheer knoppen */}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={addSet}
+              className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+            >
+              + Set toevoegen
+            </button>
+            {numSets > 1 && (
+              <button
+                type="button"
+                onClick={removeSet}
+                className="text-sm text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+              >
+                − Set verwijderen
+              </button>
+            )}
           </div>
 
           <div className="flex gap-3 pt-2">

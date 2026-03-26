@@ -1,6 +1,33 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { addExerciseToSession } from "@/lib/queries/sessions";
+import { addExerciseToSession, updateExerciseSortOrders } from "@/lib/queries/sessions";
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const { orders } = body;
+
+    if (!Array.isArray(orders)) {
+      return NextResponse.json({ error: "Ongeldige data." }, { status: 400 });
+    }
+
+    await updateExerciseSortOrders(orders);
+
+    revalidatePath(`/sessions/${id}`);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Fout bij herordenen oefeningen:", error);
+    return NextResponse.json(
+      { error: "Kon volgorde niet opslaan." },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(
   request: Request,

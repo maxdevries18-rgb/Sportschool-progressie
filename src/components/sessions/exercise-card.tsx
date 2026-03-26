@@ -48,7 +48,9 @@ export function ExerciseCard({
     }
   };
 
-  const maxSets = 3;
+  const totalSets = sessionExercise.sets.length > 0
+    ? Math.max(...sessionExercise.sets.map((s) => s.setNumber))
+    : 0;
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl ring-1 ring-gray-200/60 dark:ring-gray-700/60 shadow-[var(--shadow-card)] p-4">
@@ -104,7 +106,7 @@ export function ExerciseCard({
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: maxSets }, (_, i) => i + 1).map((setNum) => (
+            {Array.from({ length: totalSets }, (_, i) => i + 1).map((setNum) => (
               <tr
                 key={setNum}
                 className="border-b border-gray-100 dark:border-gray-800 last:border-0 even:bg-gray-50 dark:even:bg-gray-800/50"
