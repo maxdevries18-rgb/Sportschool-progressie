@@ -50,40 +50,38 @@ export default async function SessionDetailPage({
       </Link>
 
       {/* Header */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl ring-1 ring-gray-200/60 dark:ring-gray-700/60 shadow-[var(--shadow-card)] p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {formatDate(session.date)}
-            </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {session.participants
-                .map((p: { user: { name: string } }) => p.user.name)
-                .join(", ")}
+      <div className="bg-white dark:bg-gray-900 rounded-xl ring-1 ring-gray-200/60 dark:ring-gray-700/60 shadow-[var(--shadow-card)] p-4 sm:p-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {formatDate(session.date)}
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {session.participants
+              .map((p: { user: { name: string } }) => p.user.name)
+              .join(", ")}
+          </p>
+          {session.notes && (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">
+              {session.notes}
             </p>
-            {session.notes && (
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">
-                {session.notes}
-              </p>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Link
-              href={`/sessions/${session.id}/edit`}
-              className="px-3 py-1.5 text-sm rounded-xl bg-white dark:bg-gray-800 ring-1 ring-gray-200 dark:ring-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-150"
+          )}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link
+            href={`/sessions/${session.id}/edit`}
+            className="px-3 py-1.5 text-sm rounded-xl bg-white dark:bg-gray-800 ring-1 ring-gray-200 dark:ring-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-150"
+          >
+            ✏️ Bewerken
+          </Link>
+          <DuplicateButton sessionId={session.id} />
+          <form action={handleDelete}>
+            <button
+              type="submit"
+              className="px-3 py-1.5 text-sm rounded-xl bg-white dark:bg-gray-800 ring-1 ring-red-200 dark:ring-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-150"
             >
-              ✏️ Bewerken
-            </Link>
-            <DuplicateButton sessionId={session.id} />
-            <form action={handleDelete}>
-              <button
-                type="submit"
-                className="px-3 py-1.5 text-sm rounded-xl bg-white dark:bg-gray-800 ring-1 ring-red-200 dark:ring-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-150"
-              >
-                🗑️ Verwijderen
-              </button>
-            </form>
-          </div>
+              🗑️ Verwijderen
+            </button>
+          </form>
         </div>
       </div>
 

@@ -36,9 +36,9 @@ export default async function ExerciseDetailPage({
           &larr; Terug naar oefeningen
         </Link>
 
-        <div className="mt-4 rounded-xl bg-white dark:bg-gray-900 p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
+        <div className="mt-4 rounded-xl bg-white dark:bg-gray-900 p-4 sm:p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60">
+          <div>
+            <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {exercise.name}
               </h1>
@@ -52,7 +52,7 @@ export default async function ExerciseDetailPage({
                   exercise.muscleGroup}
               </span>
             </div>
-            <div className="flex gap-2">
+            <div className="mt-3 flex flex-wrap gap-2">
               <EditExerciseForm exercise={exercise} />
               <DeleteExerciseButton exerciseId={exercise.id} />
             </div>

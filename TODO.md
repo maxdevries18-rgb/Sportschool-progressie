@@ -10,8 +10,8 @@
 5. [ ] Rusttijd bijhouden per set
 
 ### Oefeningen bibliotheek
-6. [ ] Nieuwe oefeningen kunnen toevoegen via de UI (nu alleen via seed-script)
-7. [ ] Oefeningen kunnen bewerken of verwijderen
+6. [x] Nieuwe oefeningen kunnen toevoegen via de UI (nu alleen via seed-script)
+7. [x] Oefeningen kunnen bewerken of verwijderen
 8. [ ] Oefeningen kunnen markeren als favoriet
 9. [ ] Zoekfunctie in de oefeningen bibliotheek
 
