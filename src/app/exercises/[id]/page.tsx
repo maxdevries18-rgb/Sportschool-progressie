@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getExerciseById } from "@/lib/queries/exercises";
 import { MUSCLE_GROUP_LABELS } from "@/lib/constants";
 import type { MuscleGroup } from "@/lib/constants";
+import { EditExerciseForm } from "@/components/exercises/edit-exercise-form";
+import { DeleteExerciseButton } from "@/components/exercises/delete-exercise-button";
 
 export default async function ExerciseDetailPage({
   params,
@@ -36,18 +38,24 @@ export default async function ExerciseDetailPage({
 
         <div className="mt-4 rounded-xl bg-white dark:bg-gray-900 p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60">
           <div className="flex items-start justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {exercise.name}
-            </h1>
-            <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset ${
-                muscleGroupColors[exercise.muscleGroup] ??
-                "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-600/20"
-              }`}
-            >
-              {MUSCLE_GROUP_LABELS[exercise.muscleGroup as MuscleGroup] ??
-                exercise.muscleGroup}
-            </span>
+            <div className="flex items-start gap-3">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                {exercise.name}
+              </h1>
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset ${
+                  muscleGroupColors[exercise.muscleGroup] ??
+                  "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-600/20"
+                }`}
+              >
+                {MUSCLE_GROUP_LABELS[exercise.muscleGroup as MuscleGroup] ??
+                  exercise.muscleGroup}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <EditExerciseForm exercise={exercise} />
+              <DeleteExerciseButton exerciseId={exercise.id} />
+            </div>
           </div>
 
           {exercise.description ? (

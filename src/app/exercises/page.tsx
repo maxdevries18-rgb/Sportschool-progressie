@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAllExercises } from "@/lib/queries/exercises";
 import { MUSCLE_GROUPS, MUSCLE_GROUP_LABELS } from "@/lib/constants";
 import type { MuscleGroup } from "@/lib/constants";
+import { AddExerciseForm } from "@/components/exercises/add-exercise-form";
 
 export default async function ExercisesPage({
   searchParams,
@@ -118,6 +119,10 @@ export default async function ExercisesPage({
             ))}
           </div>
         )}
+
+        <div className="mt-6">
+          <AddExerciseForm />
+        </div>
       </div>
   );
 }
