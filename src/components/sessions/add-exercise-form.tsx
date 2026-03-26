@@ -38,11 +38,11 @@ export function AddExerciseForm({
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!isOpen || exercises.length > 0) return;
+
     fetch("/api/exercises?page=1")
       .then((r) => r.json())
       .then((data) => {
-        // Load all exercises for the picker (API returns paginated result)
-        // Fetch enough pages to get all exercises
         const allExercises = data.exercises ?? data;
         if (data.totalPages && data.totalPages > 1) {
           const pagePromises = [];
@@ -60,7 +60,7 @@ export function AddExerciseForm({
         }
       })
       .catch(() => {});
-  }, []);
+  }, [isOpen]);
 
   const initSets = (count: number) => {
     const initial: Record<number, SetData[]> = {};
