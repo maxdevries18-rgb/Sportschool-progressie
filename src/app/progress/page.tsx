@@ -2,17 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useCurrentUser } from "@/contexts/user-context";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+
+const ProgressChart = dynamic(() => import("./ProgressChart"), { ssr: false });
 
 interface User {
   id: number;
@@ -65,7 +58,7 @@ export default function ProgressPage() {
       .catch(() => {});
     fetch("/api/exercises")
       .then((res) => res.json())
-      .then(setExercises)
+      .then((data) => setExercises(data.exercises ?? data))
       .catch(() => {});
 
     // Detect dark mode
@@ -100,16 +93,6 @@ export default function ProgressPage() {
       })
       .finally(() => setLoading(false));
   }, [selectedUserId, selectedExerciseId]);
-
-  const formatDateLabel = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("nl-NL", { day: "numeric", month: "short" });
-  };
-
-  const gridColor = isDark ? "#374151" : "#f0f0f0";
-  const axisColor = isDark ? "#6b7280" : "#9ca3af";
-  const tooltipBg = isDark ? "#1f2937" : "#ffffff";
-  const tooltipBorder = isDark ? "#374151" : "#e5e7eb";
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -227,76 +210,7 @@ export default function ProgressPage() {
               <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Voortgang over tijd
               </h2>
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={progressData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={formatDateLabel}
-                    tick={{ fontSize: 12, fill: axisColor }}
-                    stroke={axisColor}
-                  />
-                  <YAxis
-                    yAxisId="left"
-                    tick={{ fontSize: 12, fill: axisColor }}
-                    stroke={axisColor}
-                  />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    tick={{ fontSize: 12, fill: axisColor }}
-                    stroke={axisColor}
-                  />
-                  <Tooltip
-                    labelFormatter={(label) => {
-                      const d = new Date(label);
-                      return d.toLocaleDateString("nl-NL", {
-                        weekday: "short",
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      });
-                    }}
-                    contentStyle={{
-                      borderRadius: "8px",
-                      border: `1px solid ${tooltipBorder}`,
-                      backgroundColor: tooltipBg,
-                      color: isDark ? "#f3f4f6" : "#111827",
-                    }}
-                  />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="maxWeight"
-                    name="Max Gewicht (kg)"
-                    stroke="#6366f1"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="maxReps"
-                    name="Max Reps"
-                    stroke="#06b6d4"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="totalVolume"
-                    name="Totaal Volume"
-                    stroke="#f59e0b"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <ProgressChart progressData={progressData} isDark={isDark} />
             </div>
 
             {personalRecords.length > 0 && (

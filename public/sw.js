@@ -29,7 +29,7 @@ self.addEventListener('fetch', (event) => {
   // Network-first for API calls and navigation
   if (request.url.includes('/api/') || request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match(request))
+      fetch(request).catch(() => caches.match('/'))
     );
     return;
   }
