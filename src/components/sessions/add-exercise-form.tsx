@@ -35,15 +35,19 @@ export function AddExerciseForm({
   const [sets, setSets] = useState<Record<number, SetData[]>>({});
   const [prevSets, setPrevSets] = useState<Record<number, PrevSet[]>>({});
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!isOpen || exercises.length > 0) return;
+    setLoading(true);
 
     fetch("/api/exercises?page=1")
       .then((r) => r.json())
       .then((data) => {
         const allExercises = data.exercises ?? data;
+        setExercises(allExercises);
+
         if (data.totalPages && data.totalPages > 1) {
           const pagePromises = [];
           for (let p = 2; p <= data.totalPages; p++) {
@@ -51,15 +55,17 @@ export function AddExerciseForm({
               fetch(`/api/exercises?page=${p}`).then((r) => r.json())
             );
           }
-          Promise.all(pagePromises).then((pages) => {
-            const all = [...allExercises, ...pages.flatMap((p) => p.exercises ?? p)];
-            setExercises(all);
-          });
+          Promise.all(pagePromises)
+            .then((pages) => {
+              const all = [...allExercises, ...pages.flatMap((p) => p.exercises ?? p)];
+              setExercises(all);
+            })
+            .finally(() => setLoading(false));
         } else {
-          setExercises(allExercises);
+          setLoading(false);
         }
       })
-      .catch(() => {});
+      .catch(() => setLoading(false));
   }, [isOpen]);
 
   const initSets = (count: number) => {
@@ -242,7 +248,7 @@ export function AddExerciseForm({
           <div className="max-h-60 overflow-y-auto space-y-1">
             {filteredExercises.length === 0 ? (
               <p className="text-sm text-gray-500 dark:text-gray-400 py-2 text-center">
-                Geen oefeningen gevonden
+                {loading ? "Oefeningen laden..." : "Geen oefeningen gevonden"}
               </p>
             ) : (
               filteredExercises.map((exercise) => (
