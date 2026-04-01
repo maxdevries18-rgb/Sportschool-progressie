@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useCurrentUser } from "@/contexts/user-context";
 import { formatDate } from "@/lib/utils";
 
@@ -17,25 +17,34 @@ export default function SessionsPage() {
   const { currentUserId } = useCurrentUser();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchSessions = useCallback(async () => {
+    if (!currentUserId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/sessions?userId=${currentUserId}`);
+      if (!res.ok) {
+        setError("Kon sessies niet laden. Probeer het opnieuw.");
+        return;
+      }
+      const data = await res.json();
+      if (!Array.isArray(data)) {
+        setError("Kon sessies niet laden. Probeer het opnieuw.");
+        return;
+      }
+      setSessions(data);
+    } catch {
+      setError("Kon sessies niet laden. Probeer het opnieuw.");
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUserId]);
 
   useEffect(() => {
-    if (!currentUserId) return;
-
-    async function fetchSessions() {
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/sessions?userId=${currentUserId}`);
-        const data = await res.json();
-        setSessions(data);
-      } catch (error) {
-        console.error("Fout bij laden sessies:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     fetchSessions();
-  }, [currentUserId]);
+  }, [fetchSessions]);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -73,6 +82,16 @@ export default function SessionsPage() {
         {loading ? (
           <div className="text-center text-gray-500 dark:text-gray-400 py-8">
             Laden...
+          </div>
+        ) : error ? (
+          <div className="rounded-xl bg-red-50 dark:bg-red-900/20 p-8 text-center ring-1 ring-red-200 dark:ring-red-800">
+            <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
+            <button
+              onClick={fetchSessions}
+              className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
+            >
+              Opnieuw proberen
+            </button>
           </div>
         ) : sessions.length === 0 ? (
           <div className="rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">

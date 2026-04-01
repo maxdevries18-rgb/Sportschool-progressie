@@ -19,15 +19,33 @@ export default function NewSessionPage() {
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [usersLoading, setUsersLoading] = useState(true);
+  const [usersError, setUsersError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/users")
-      .then((r) => r.json())
-      .then((data) => {
+    async function fetchUsers() {
+      setUsersLoading(true);
+      setUsersError(null);
+      try {
+        const r = await fetch("/api/users");
+        if (!r.ok) {
+          setUsersError("Kon gebruikers niet laden.");
+          return;
+        }
+        const data = await r.json();
+        if (!Array.isArray(data)) {
+          setUsersError("Kon gebruikers niet laden.");
+          return;
+        }
         setAllUsers(data);
         setSelectedUserIds(currentUserId ? [currentUserId] : []);
-      })
-      .catch(() => {});
+      } catch {
+        setUsersError("Kon gebruikers niet laden.");
+      } finally {
+        setUsersLoading(false);
+      }
+    }
+    fetchUsers();
   }, [currentUserId]);
 
   const toggleUser = (userId: number) => {
@@ -121,26 +139,38 @@ export default function NewSessionPage() {
               Deelnemers
             </label>
             <div className="space-y-2">
-              {allUsers.map((user) => (
-                <label
-                  key={user.id}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedUserIds.includes(user.id)}
-                    onChange={() => toggleUser(user.id)}
-                    className="w-5 h-5 rounded-lg text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500 dark:bg-gray-800"
-                  />
-                  <span className="text-gray-900 dark:text-gray-100 font-medium">
-                    {user.name}
-                  </span>
-                </label>
-              ))}
-              {allUsers.length === 0 && (
+              {usersLoading ? (
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Gebruikers laden...
                 </p>
+              ) : usersError ? (
+                <p className="text-sm text-red-500 dark:text-red-400">
+                  {usersError}{" "}
+                  <Link href="/sessions/new" className="underline hover:no-underline">
+                    Ververs de pagina
+                  </Link>
+                </p>
+              ) : allUsers.length === 0 ? (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Geen gebruikers gevonden.
+                </p>
+              ) : (
+                allUsers.map((user) => (
+                  <label
+                    key={user.id}
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedUserIds.includes(user.id)}
+                      onChange={() => toggleUser(user.id)}
+                      className="w-5 h-5 rounded-lg text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500 dark:bg-gray-800"
+                    />
+                    <span className="text-gray-900 dark:text-gray-100 font-medium">
+                      {user.name}
+                    </span>
+                  </label>
+                ))
               )}
             </div>
           </div>

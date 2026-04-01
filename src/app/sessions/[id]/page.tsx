@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
-import { getSessionById, deleteSession } from "@/lib/queries/sessions";
-import { revalidatePath } from "next/cache";
+import { notFound } from "next/navigation";
+import { getSessionById } from "@/lib/queries/sessions";
 import { formatDate } from "@/lib/utils";
 import { ExerciseList } from "@/components/sessions/exercise-list";
 import { AddExerciseForm } from "@/components/sessions/add-exercise-form";
 import { DuplicateButton } from "@/components/sessions/duplicate-button";
+import { DeleteButton } from "@/components/sessions/delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -19,14 +19,6 @@ export default async function SessionDetailPage({
 
   if (!session) {
     notFound();
-  }
-
-  async function handleDelete() {
-    "use server";
-    await deleteSession(Number(id));
-    revalidatePath("/sessions");
-    revalidatePath("/");
-    redirect("/sessions");
   }
 
   const participantIds = session.participants.map(
@@ -74,14 +66,7 @@ export default async function SessionDetailPage({
             ✏️ Bewerken
           </Link>
           <DuplicateButton sessionId={session.id} />
-          <form action={handleDelete}>
-            <button
-              type="submit"
-              className="px-3 py-1.5 text-sm rounded-xl bg-white dark:bg-gray-800 ring-1 ring-red-200 dark:ring-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-150"
-            >
-              🗑️ Verwijderen
-            </button>
-          </form>
+          <DeleteButton sessionId={session.id} />
         </div>
       </div>
 
