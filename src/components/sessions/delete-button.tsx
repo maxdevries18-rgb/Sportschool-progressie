@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export function DeleteButton({ sessionId }: { sessionId: number }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -15,11 +13,13 @@ export function DeleteButton({ sessionId }: { sessionId: number }) {
         method: "DELETE",
       });
       if (res.ok) {
-        router.push("/sessions");
+        window.location.href = "/sessions";
+        return;
       }
-    } finally {
-      setLoading(false);
+    } catch {
+      // ignore
     }
+    setLoading(false);
   };
 
   return (

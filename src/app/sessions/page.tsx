@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useCurrentUser } from "@/contexts/user-context";
 import { formatDate } from "@/lib/utils";
 
@@ -18,33 +18,38 @@ export default function SessionsPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchSessions = useCallback(async () => {
-    if (!currentUserId) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/sessions?userId=${currentUserId}`);
-      if (!res.ok) {
-        setError("Kon sessies niet laden. Probeer het opnieuw.");
-        return;
-      }
-      const data = await res.json();
-      if (!Array.isArray(data)) {
-        setError("Kon sessies niet laden. Probeer het opnieuw.");
-        return;
-      }
-      setSessions(data);
-    } catch {
-      setError("Kon sessies niet laden. Probeer het opnieuw.");
-    } finally {
-      setLoading(false);
-    }
-  }, [currentUserId]);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
+    if (!currentUserId) return;
+
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    async function fetchSessions() {
+      try {
+        const res = await fetch(`/api/sessions?userId=${currentUserId}`);
+        if (!res.ok) {
+          if (!cancelled) setError("Kon sessies niet laden. Probeer het opnieuw.");
+          return;
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          if (!cancelled) setError("Kon sessies niet laden. Probeer het opnieuw.");
+          return;
+        }
+        if (!cancelled) setSessions(data);
+      } catch {
+        if (!cancelled) setError("Kon sessies niet laden. Probeer het opnieuw.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
     fetchSessions();
-  }, [fetchSessions]);
+    return () => { cancelled = true; };
+  }, [currentUserId, retryKey]);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -87,7 +92,7 @@ export default function SessionsPage() {
           <div className="rounded-xl bg-red-50 dark:bg-red-900/20 p-8 text-center ring-1 ring-red-200 dark:ring-red-800">
             <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
             <button
-              onClick={fetchSessions}
+              onClick={() => setRetryKey(k => k + 1)}
               className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
             >
               Opnieuw proberen
