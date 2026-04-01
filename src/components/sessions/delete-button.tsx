@@ -16,7 +16,6 @@ export function DeleteButton({ sessionId }: { sessionId: number }) {
       });
       if (res.ok) {
         router.push("/sessions");
-        router.refresh();
       }
     } finally {
       setLoading(false);
