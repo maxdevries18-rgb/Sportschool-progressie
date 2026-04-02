@@ -10,6 +10,7 @@ import type { MuscleGroup, Equipment, Level } from "@/lib/constants";
 import { EditExerciseForm } from "@/components/exercises/edit-exercise-form";
 import { DeleteExerciseButton } from "@/components/exercises/delete-exercise-button";
 import { ExerciseImage } from "@/components/exercises/exercise-image";
+import { FavoriteButton } from "@/components/exercises/favorite-button";
 
 export default async function ExerciseDetailPage({
   params,
@@ -124,7 +125,13 @@ export default async function ExerciseDetailPage({
           </div>
 
           {/* Actions */}
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <FavoriteButton
+              exerciseId={exercise.id}
+              initialIsFavorite={false}
+              fetchOnMount={true}
+              className="w-auto px-3 gap-1.5 rounded-full ring-1 ring-gray-200 dark:ring-gray-700 bg-white dark:bg-gray-800 text-sm font-medium"
+            />
             <EditExerciseForm exercise={exercise} />
             <DeleteExerciseButton exerciseId={exercise.id} />
           </div>

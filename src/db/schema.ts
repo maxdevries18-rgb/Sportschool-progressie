@@ -92,6 +92,20 @@ export const trainingSchemaExercises = pgTable("training_schema_exercises", {
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
+export const userFavoriteExercises = pgTable(
+  "user_favorite_exercises",
+  {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    exerciseId: integer("exercise_id")
+      .notNull()
+      .references(() => exercises.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.exerciseId] })]
+);
+
 export const sets = pgTable(
   "sets",
   {
@@ -119,12 +133,28 @@ export const sets = pgTable(
 export const usersRelations = relations(users, ({ many }) => ({
   sessionParticipants: many(sessionParticipants),
   sets: many(sets),
+  favoriteExercises: many(userFavoriteExercises),
 }));
 
 export const exercisesRelations = relations(exercises, ({ many }) => ({
   sessionExercises: many(sessionExercises),
   trainingSchemaExercises: many(trainingSchemaExercises),
+  favoritedBy: many(userFavoriteExercises),
 }));
+
+export const userFavoriteExercisesRelations = relations(
+  userFavoriteExercises,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userFavoriteExercises.userId],
+      references: [users.id],
+    }),
+    exercise: one(exercises, {
+      fields: [userFavoriteExercises.exerciseId],
+      references: [exercises.id],
+    }),
+  })
+);
 
 export const sessionsRelations = relations(sessions, ({ many }) => ({
   participants: many(sessionParticipants),

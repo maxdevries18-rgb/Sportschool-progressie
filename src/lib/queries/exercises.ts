@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { eq, sql, ilike, and, count } from "drizzle-orm";
+import { eq, sql, ilike, and, count, inArray } from "drizzle-orm";
 import * as schema from "@/db/schema";
 
 const PAGE_SIZE = 24;
@@ -68,12 +68,63 @@ export async function isExerciseInUse(id: number): Promise<boolean> {
   return (result[0]?.count ?? 0) > 0;
 }
 
+export async function getFavoriteExerciseIds(userId: number): Promise<number[]> {
+  const rows = await db
+    .select({ exerciseId: schema.userFavoriteExercises.exerciseId })
+    .from(schema.userFavoriteExercises)
+    .where(eq(schema.userFavoriteExercises.userId, userId));
+  return rows.map((r) => r.exerciseId);
+}
+
+export async function toggleFavorite(
+  userId: number,
+  exerciseId: number
+): Promise<boolean> {
+  const existing = await db
+    .select()
+    .from(schema.userFavoriteExercises)
+    .where(
+      and(
+        eq(schema.userFavoriteExercises.userId, userId),
+        eq(schema.userFavoriteExercises.exerciseId, exerciseId)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .delete(schema.userFavoriteExercises)
+      .where(
+        and(
+          eq(schema.userFavoriteExercises.userId, userId),
+          eq(schema.userFavoriteExercises.exerciseId, exerciseId)
+        )
+      );
+    return false;
+  } else {
+    await db
+      .insert(schema.userFavoriteExercises)
+      .values({ userId, exerciseId });
+    return true;
+  }
+}
+
 export async function getAllExercises(
   muscleGroup?: string,
   search?: string,
-  page: number = 1
+  page: number = 1,
+  userId?: number,
+  favoritesOnly?: boolean
 ) {
   const conditions = [];
+
+  if (favoritesOnly && userId) {
+    const favoriteIds = await getFavoriteExerciseIds(userId);
+    if (favoriteIds.length === 0) {
+      return { exercises: [], total: 0, page, pageSize: PAGE_SIZE, totalPages: 0 };
+    }
+    conditions.push(inArray(schema.exercises.id, favoriteIds));
+  }
 
   if (muscleGroup) {
     conditions.push(eq(schema.exercises.muscleGroup, muscleGroup));
