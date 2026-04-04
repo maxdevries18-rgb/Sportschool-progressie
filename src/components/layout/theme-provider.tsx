@@ -2,15 +2,20 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 
+export type ColorTheme = "indigo" | "blue" | "emerald" | "rose" | "amber" | "violet";
+
 interface ThemeContextType {
   theme: "light" | "dark";
   toggleTheme: () => void;
+  colorTheme: ColorTheme;
+  setColorTheme: (color: ColorTheme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [colorTheme, setColorThemeState] = useState<ColorTheme>("indigo");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,13 +27,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setTheme("light");
       document.documentElement.classList.remove("dark");
     } else {
-      // Check system preference
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       if (prefersDark) {
         setTheme("dark");
         document.documentElement.classList.add("dark");
       }
     }
+
+    const storedColor = localStorage.getItem("colorTheme") as ColorTheme | null;
+    if (storedColor) {
+      setColorThemeState(storedColor);
+      document.documentElement.setAttribute("data-color-theme", storedColor);
+    }
+
     setMounted(true);
   }, []);
 
@@ -45,13 +56,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // Avoid flash of wrong theme
+  const setColorTheme = useCallback((color: ColorTheme) => {
+    setColorThemeState(color);
+    localStorage.setItem("colorTheme", color);
+    document.documentElement.setAttribute("data-color-theme", color);
+  }, []);
+
   if (!mounted) {
-    return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
+    return <ThemeContext.Provider value={{ theme, toggleTheme, colorTheme, setColorTheme }}>{children}</ThemeContext.Provider>;
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, colorTheme, setColorTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -28,6 +28,7 @@ export default function ProgressChart({ progressData, isDark }: ProgressChartPro
   const axisColor = isDark ? "#6b7280" : "#9ca3af";
   const tooltipBg = isDark ? "#1f2937" : "#ffffff";
   const tooltipBorder = isDark ? "#374151" : "#e5e7eb";
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue("--primary-500").trim() || "#6366f1";
 
   const formatDateLabel = (dateStr: string) => {
     const d = new Date(dateStr);
@@ -78,7 +79,7 @@ export default function ProgressChart({ progressData, isDark }: ProgressChartPro
           type="monotone"
           dataKey="maxWeight"
           name="Max Gewicht (kg)"
-          stroke="#6366f1"
+          stroke={primaryColor}
           strokeWidth={2}
           dot={{ r: 4 }}
           activeDot={{ r: 6 }}

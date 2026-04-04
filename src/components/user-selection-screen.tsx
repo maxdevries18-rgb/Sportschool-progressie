@@ -87,10 +87,10 @@ export function UserSelectionScreen() {
                   <button
                     key={user.id}
                     onClick={() => selectUser(user.id, user.name)}
-                    className="w-full rounded-xl bg-white dark:bg-gray-900 p-4 text-left text-lg font-medium text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:shadow-md hover:ring-indigo-300 dark:hover:ring-indigo-600 active:scale-[0.98]"
+                    className="w-full rounded-xl bg-white dark:bg-gray-900 p-4 text-left text-lg font-medium text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:shadow-md hover:ring-primary-300 dark:hover:ring-primary-600 active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-bold">
                         {user.name.charAt(0).toUpperCase()}
                       </div>
                       {user.name}
@@ -110,13 +110,13 @@ export function UserSelectionScreen() {
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="Naam"
-                  className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   disabled={creating}
                 />
                 <button
                   type="submit"
                   disabled={creating || !newName.trim()}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition"
+                  className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50 transition"
                 >
                   {creating ? "..." : "Aanmaken"}
                 </button>

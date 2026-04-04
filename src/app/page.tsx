@@ -65,7 +65,7 @@ export default function DashboardPage() {
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Link
             href="/sessions/new"
-            className="flex flex-col items-center rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 p-4 text-white shadow-sm hover:from-indigo-600 hover:to-indigo-700 hover:shadow-md active:scale-[0.98] transition-all duration-150"
+            className="flex flex-col items-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 p-4 text-white shadow-sm hover:from-primary-600 hover:to-primary-700 hover:shadow-md active:scale-[0.98] transition-all duration-150"
           >
             <svg
               className="mb-2 h-6 w-6"
@@ -87,7 +87,7 @@ export default function DashboardPage() {
             className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-4 text-gray-700 dark:text-gray-300 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <svg
-              className="mb-2 h-6 w-6 text-indigo-500"
+              className="mb-2 h-6 w-6 text-primary-500"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={2}
@@ -106,7 +106,7 @@ export default function DashboardPage() {
             className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-4 text-gray-700 dark:text-gray-300 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <svg
-              className="mb-2 h-6 w-6 text-indigo-500"
+              className="mb-2 h-6 w-6 text-primary-500"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={2}
@@ -125,7 +125,7 @@ export default function DashboardPage() {
             className="flex flex-col items-center rounded-xl bg-white dark:bg-gray-900 p-4 text-gray-700 dark:text-gray-300 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 transition hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <svg
-              className="mb-2 h-6 w-6 text-indigo-500"
+              className="mb-2 h-6 w-6 text-primary-500"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={2}
@@ -168,7 +168,7 @@ export default function DashboardPage() {
                         key={week.weekStart}
                         className={`rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm ring-1 ${
                           isCurrentWeek
-                            ? "ring-indigo-300 bg-indigo-50/30 dark:bg-indigo-900/20 dark:ring-indigo-700"
+                            ? "ring-primary-300 bg-primary-50/30 dark:bg-primary-900/20 dark:ring-primary-700"
                             : "ring-gray-200 dark:ring-gray-700"
                         }`}
                       >
@@ -177,7 +177,7 @@ export default function DashboardPage() {
                             <p className="font-medium text-gray-900 dark:text-gray-100">
                               {getWeekLabel(week.weekStart)}
                               {isCurrentWeek && (
-                                <span className="ml-2 text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                                <span className="ml-2 text-xs font-medium text-primary-600 dark:text-primary-400">
                                   Deze week
                                 </span>
                               )}
@@ -238,7 +238,7 @@ export default function DashboardPage() {
                   </p>
                   <Link
                     href="/sessions/new"
-                    className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
+                    className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 px-4 py-2 text-sm font-medium text-white hover:from-primary-600 hover:to-primary-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
                   >
                     Eerste sessie aanmaken
                   </Link>
@@ -261,7 +261,7 @@ export default function DashboardPage() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                          <span className="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-900/30 px-2.5 py-0.5 text-xs font-medium text-primary-700 dark:text-primary-300">
                             {session.exerciseCount}{" "}
                             {session.exerciseCount === 1
                               ? "oefening"
@@ -280,7 +280,7 @@ export default function DashboardPage() {
                   <div className="pt-2 text-center">
                     <Link
                       href="/sessions"
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+                      className="text-sm font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
                     >
                       Alle sessies bekijken &rarr;
                     </Link>

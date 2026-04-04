@@ -41,7 +41,7 @@ export default async function ExerciseDetailPage({
     <div className="mx-auto max-w-4xl">
       <Link
         href="/exercises"
-        className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
+        className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500"
       >
         &larr; Terug naar oefeningen
       </Link>

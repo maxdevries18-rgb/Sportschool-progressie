@@ -99,7 +99,7 @@ export default function ProgressPage() {
         <div className="mb-6">
           <Link
             href="/"
-            className="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+            className="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
           >
             &larr; Dashboard
           </Link>
@@ -123,7 +123,7 @@ export default function ProgressPage() {
               onChange={(e) =>
                 setSelectedUserId(e.target.value ? Number(e.target.value) : null)
               }
-              className="block w-full rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-base sm:text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors duration-150"
+              className="block w-full rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-base sm:text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150"
             >
               <option value="">Selecteer een gebruiker...</option>
               {users.map((user) => (
@@ -149,7 +149,7 @@ export default function ProgressPage() {
                   e.target.value ? Number(e.target.value) : null
                 )
               }
-              className="block w-full rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-base sm:text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors duration-150"
+              className="block w-full rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-3 py-2 text-base sm:text-sm text-gray-900 shadow-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150"
             >
               <option value="">Selecteer een oefening...</option>
               {exercises.map((ex) => (
@@ -182,7 +182,7 @@ export default function ProgressPage() {
           </div>
         ) : loading ? (
           <div className="rounded-xl bg-white dark:bg-gray-900 p-8 text-center shadow-sm ring-1 ring-gray-200 dark:ring-gray-700">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400" />
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary-200 dark:border-primary-800 border-t-primary-600 dark:border-t-primary-400" />
             <p className="mt-4 text-gray-500 dark:text-gray-400">Gegevens laden...</p>
           </div>
         ) : progressData.length === 0 ? (
@@ -223,8 +223,8 @@ export default function ProgressPage() {
                     .filter((pr) => pr.exerciseId === selectedExerciseId)
                     .map((pr) => (
                     <React.Fragment key={pr.exerciseId}>
-                      <div className="rounded-xl bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-900/30 dark:to-gray-900 p-4 ring-1 ring-indigo-100 dark:ring-indigo-800">
-                        <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                      <div className="rounded-xl bg-gradient-to-br from-primary-50 to-white dark:from-primary-900/30 dark:to-gray-900 p-4 ring-1 ring-primary-100 dark:ring-primary-800">
+                        <p className="text-sm font-medium text-primary-600 dark:text-primary-400">
                           Max Gewicht
                         </p>
                         <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">

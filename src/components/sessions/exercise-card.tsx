@@ -96,7 +96,7 @@ export function ExerciseCard({
                 <th
                   key={p.userId}
                   colSpan={3}
-                  className="text-center py-2 px-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider"
+                  className="text-center py-2 px-1 text-xs font-medium text-primary-600 dark:text-primary-400 uppercase tracking-wider"
                 >
                   {p.user.name}
                 </th>
@@ -144,7 +144,7 @@ export function ExerciseCard({
                           <span className="text-gray-300 dark:text-gray-600">-</span>
                         )}
                       </td>
-                      <td className="text-center py-2 px-1 text-indigo-600 dark:text-indigo-400 font-medium">
+                      <td className="text-center py-2 px-1 text-primary-600 dark:text-primary-400 font-medium">
                         {set ? (
                           (set.reps * set.weightKg).toFixed(1)
                         ) : (

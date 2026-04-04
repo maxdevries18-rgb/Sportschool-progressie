@@ -40,7 +40,7 @@ export default async function ExercisesPage({
         <div>
           <Link
             href="/"
-            className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
+            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-500"
           >
             &larr; Dashboard
           </Link>
@@ -61,7 +61,7 @@ export default async function ExercisesPage({
           href="/exercises"
           className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 ${
             !selectedGroup && !favoritesOnly
-              ? "bg-gradient-to-b from-indigo-500 to-indigo-600 text-white shadow-sm"
+              ? "bg-gradient-to-b from-primary-500 to-primary-600 text-white shadow-sm"
               : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
           }`}
         >
@@ -76,7 +76,7 @@ export default async function ExercisesPage({
             href={`/exercises?muscleGroup=${group}${search ? `&search=${search}` : ""}`}
             className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-150 ${
               selectedGroup === group
-                ? "bg-gradient-to-b from-indigo-500 to-indigo-600 text-white shadow-sm"
+                ? "bg-gradient-to-b from-primary-500 to-primary-600 text-white shadow-sm"
                 : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-1 ring-gray-200 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >

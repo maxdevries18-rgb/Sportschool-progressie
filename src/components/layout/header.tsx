@@ -43,7 +43,7 @@ export function Header() {
               href={link.href}
               className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 isActive(link.href)
-                  ? "bg-gray-100 dark:bg-gray-700 text-indigo-600 dark:text-white"
+                  ? "bg-gray-100 dark:bg-gray-700 text-primary-600 dark:text-white"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
@@ -57,7 +57,7 @@ export function Header() {
               className="ml-2 flex items-center gap-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               title="Wissel van gebruiker"
             >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-xs font-bold text-primary-600 dark:text-primary-400">
                 {currentUserName?.charAt(0).toUpperCase()}
               </span>
               {currentUserName}
@@ -115,7 +115,7 @@ export function Header() {
               onClick={() => setMenuOpen(false)}
               className={`block rounded-md px-3 py-2 text-base font-medium transition-colors ${
                 isActive(link.href)
-                  ? "bg-gray-100 dark:bg-gray-700 text-indigo-600 dark:text-white"
+                  ? "bg-gray-100 dark:bg-gray-700 text-primary-600 dark:text-white"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
@@ -129,7 +129,7 @@ export function Header() {
                 onClick={() => { clearUser(); setMenuOpen(false); }}
                 className="flex items-center gap-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30 text-xs font-bold text-primary-600 dark:text-primary-400">
                   {currentUserName?.charAt(0).toUpperCase()}
                 </span>
                 {currentUserName}

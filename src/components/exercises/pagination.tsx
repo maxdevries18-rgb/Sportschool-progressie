@@ -65,7 +65,7 @@ export function Pagination({ currentPage, totalPages, total }: PaginationProps) 
               href={getPageUrl(p)}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 p === currentPage
-                  ? "bg-indigo-500 text-white"
+                  ? "bg-primary-500 text-white"
                   : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}
             >

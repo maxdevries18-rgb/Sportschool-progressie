@@ -124,7 +124,7 @@ export default function SchemaDetailPage({
         </p>
         <Link
           href="/schemas"
-          className="mt-2 inline-block text-indigo-600 dark:text-indigo-400"
+          className="mt-2 inline-block text-primary-600 dark:text-primary-400"
         >
           Terug naar schema&apos;s
         </Link>
@@ -136,7 +136,7 @@ export default function SchemaDetailPage({
     <div className="space-y-6">
       <Link
         href="/schemas"
-        className="inline-flex items-center text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+        className="inline-flex items-center text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors"
       >
         &larr; Terug naar schema&apos;s
       </Link>
@@ -164,7 +164,7 @@ export default function SchemaDetailPage({
           <button
             onClick={handleStartSession}
             disabled={starting}
-            className="px-3 py-1.5 text-sm rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-medium shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
+            className="px-3 py-1.5 text-sm rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
           >
             {starting ? "Starten..." : "Start Sessie"}
           </button>
@@ -200,7 +200,7 @@ export default function SchemaDetailPage({
                   type="checkbox"
                   checked={selectedUserIds.includes(user.id)}
                   onChange={() => toggleUser(user.id)}
-                  className="w-5 h-5 rounded-lg text-indigo-600 border-gray-300 dark:border-gray-600 focus:ring-indigo-500 dark:bg-gray-800"
+                  className="w-5 h-5 rounded-lg text-primary-600 border-gray-300 dark:border-gray-600 focus:ring-primary-500 dark:bg-gray-800"
                 />
                 <span className="text-gray-900 dark:text-gray-100 font-medium">
                   {user.name}
@@ -212,7 +212,7 @@ export default function SchemaDetailPage({
             <button
               onClick={handleStartSession}
               disabled={starting || selectedUserIds.length === 0}
-              className="flex-1 bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-medium rounded-xl px-6 py-2.5 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
+              className="flex-1 bg-gradient-to-b from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium rounded-xl px-6 py-2.5 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
             >
               {starting ? "Starten..." : "Sessie starten"}
             </button>
@@ -239,7 +239,7 @@ export default function SchemaDetailPage({
             </p>
             <Link
               href={`/schemas/${schema.id}/edit`}
-              className="mt-2 inline-block text-indigo-600 dark:text-indigo-400 text-sm"
+              className="mt-2 inline-block text-primary-600 dark:text-primary-400 text-sm"
             >
               Oefeningen toevoegen
             </Link>

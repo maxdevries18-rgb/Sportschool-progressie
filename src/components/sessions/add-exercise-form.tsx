@@ -208,7 +208,7 @@ export function AddExerciseForm({
     return (
       <button
         onClick={handleOpen}
-        className="w-full bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-medium rounded-xl px-6 py-3 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
+        className="w-full bg-gradient-to-b from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium rounded-xl px-6 py-3 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
       >
         ➕ Oefening toevoegen
       </button>
@@ -242,7 +242,7 @@ export function AddExerciseForm({
             placeholder="Zoek oefening..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors duration-150 placeholder-gray-400 dark:placeholder-gray-500"
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150 placeholder-gray-400 dark:placeholder-gray-500"
             autoFocus
           />
           <div className="max-h-60 overflow-y-auto space-y-1">
@@ -255,9 +255,9 @@ export function AddExerciseForm({
                 <button
                   key={exercise.id}
                   onClick={() => handleSelectExercise(exercise)}
-                  className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors flex items-center justify-between group"
+                  className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors flex items-center justify-between group"
                 >
-                  <span className="text-gray-900 dark:text-gray-100 font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  <span className="text-gray-900 dark:text-gray-100 font-medium group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                     {exercise.name}
                   </span>
                   <Badge label={exercise.muscleGroup} variant={exercise.muscleGroup as "borst" | "rug" | "benen" | "schouders" | "armen" | "core"} />
@@ -275,7 +275,7 @@ export function AddExerciseForm({
             <Badge label={selectedExercise.muscleGroup} variant={selectedExercise.muscleGroup as "borst" | "rug" | "benen" | "schouders" | "armen" | "core"} />
             <button
               onClick={() => setSelectedExercise(null)}
-              className="ml-auto text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+              className="ml-auto text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
             >
               Wijzig
             </button>
@@ -293,7 +293,7 @@ export function AddExerciseForm({
                     <th
                       key={uid}
                       colSpan={2}
-                      className="text-center py-2 px-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider"
+                      className="text-center py-2 px-1 text-xs font-medium text-primary-600 dark:text-primary-400 uppercase tracking-wider"
                     >
                       {participantNames[uid]}
                     </th>
@@ -334,7 +334,7 @@ export function AddExerciseForm({
                               placeholder={prev ? String(prev.reps) : "0"}
                               value={sets[uid]?.[setIdx]?.reps ?? ""}
                               onChange={(e) => updateSet(uid, setIdx, "reps", e.target.value)}
-                              className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+                              className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors"
                             />
                             {prev && (
                               <div className="text-center text-xs text-gray-400 dark:text-gray-500 mt-0.5">
@@ -349,7 +349,7 @@ export function AddExerciseForm({
                               placeholder={prev ? String(prev.weightKg) : "0"}
                               value={sets[uid]?.[setIdx]?.weightKg ?? ""}
                               onChange={(e) => updateSet(uid, setIdx, "weightKg", e.target.value)}
-                              className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors"
+                              className="w-16 text-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 py-1.5 text-base sm:text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors"
                             />
                             {prev && (
                               <div className="text-center text-xs text-gray-400 dark:text-gray-500 mt-0.5">
@@ -371,7 +371,7 @@ export function AddExerciseForm({
             <button
               type="button"
               onClick={addSet}
-              className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors"
             >
               + Set toevoegen
             </button>
@@ -390,7 +390,7 @@ export function AddExerciseForm({
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-medium rounded-xl px-6 py-2.5 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
+              className="flex-1 bg-gradient-to-b from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium rounded-xl px-6 py-2.5 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
             >
               {saving ? "Opslaan..." : "Opslaan"}
             </button>

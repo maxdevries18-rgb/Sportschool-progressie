@@ -36,7 +36,7 @@ export default async function SessionDetailPage({
     <div className="space-y-6">
       <Link
         href="/sessions"
-        className="inline-flex items-center text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+        className="inline-flex items-center text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors"
       >
         ← Terug naar sessies
       </Link>

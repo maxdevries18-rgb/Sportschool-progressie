@@ -2,14 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { useCurrentUser } from "@/contexts/user-context";
+import { useTheme, type ColorTheme } from "@/components/layout/theme-provider";
 
 interface User {
   id: number;
   name: string;
 }
 
+const COLOR_THEMES: { value: ColorTheme; label: string; swatch: string }[] = [
+  { value: "indigo", label: "Indigo", swatch: "#6366f1" },
+  { value: "blue", label: "Blauw", swatch: "#3b82f6" },
+  { value: "emerald", label: "Groen", swatch: "#10b981" },
+  { value: "rose", label: "Rood", swatch: "#f43f5e" },
+  { value: "amber", label: "Oranje", swatch: "#f59e0b" },
+  { value: "violet", label: "Paars", swatch: "#8b5cf6" },
+];
+
 export default function SettingsPage() {
   const { currentUserName, clearUser } = useCurrentUser();
+  const { colorTheme, setColorTheme } = useTheme();
   const [users, setUsers] = useState<User[]>([]);
   const [newUserName, setNewUserName] = useState("");
   const [creatingUser, setCreatingUser] = useState(false);
@@ -83,7 +94,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
       </div>
     );
   }
@@ -92,6 +103,36 @@ export default function SettingsPage() {
     <div>
       <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">Instellingen</h1>
 
+      {/* Uiterlijk */}
+      <div className="mb-6 rounded-xl bg-white dark:bg-gray-900 p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60">
+        <h2 className="mb-1 text-lg font-semibold text-gray-900 dark:text-gray-100">Uiterlijk</h2>
+        <p className="mb-5 text-sm text-gray-500 dark:text-gray-400">Kies een kleurenthema voor de app.</p>
+        <div className="flex flex-wrap gap-3">
+          {COLOR_THEMES.map((t) => (
+            <button
+              key={t.value}
+              type="button"
+              onClick={() => setColorTheme(t.value)}
+              className={`flex flex-col items-center gap-1.5 rounded-xl border-2 px-4 py-3 transition-all duration-150 ${
+                colorTheme === t.value
+                  ? "border-primary-500 bg-primary-50 dark:bg-primary-950/30"
+                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+              }`}
+              aria-pressed={colorTheme === t.value}
+            >
+              <span
+                className="h-6 w-6 rounded-full shadow-sm ring-1 ring-black/10"
+                style={{ backgroundColor: t.swatch }}
+              />
+              <span className={`text-xs font-medium ${colorTheme === t.value ? "text-primary-700 dark:text-primary-300" : "text-gray-600 dark:text-gray-400"}`}>
+                {t.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Gebruikers beheren */}
       <div className="rounded-xl bg-white dark:bg-gray-900 p-6 shadow-[var(--shadow-card)] ring-1 ring-gray-200/60 dark:ring-gray-700/60">
         <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
           Gebruikers beheren
@@ -123,13 +164,13 @@ export default function SettingsPage() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSave(user.id);
                   }}
-                  className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-base sm:text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors duration-150 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-base sm:text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150 focus:outline-none"
                 />
               </div>
               <button
                 onClick={() => handleSave(user.id)}
                 disabled={saving[user.id]}
-                className="mt-6 rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                className="mt-6 rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
               >
                 {saving[user.id] ? "Opslaan..." : "Opslaan"}
               </button>
@@ -186,13 +227,13 @@ export default function SettingsPage() {
               value={newUserName}
               onChange={(e) => setNewUserName(e.target.value)}
               placeholder="Naam"
-              className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-base sm:text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:ring-indigo-400/20 dark:focus:border-indigo-400 transition-colors duration-150 focus:outline-none"
+              className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-base sm:text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150 focus:outline-none"
               disabled={creatingUser}
             />
             <button
               type="submit"
               disabled={creatingUser || !newUserName.trim()}
-              className="rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               {creatingUser ? "..." : "Aanmaken"}
             </button>

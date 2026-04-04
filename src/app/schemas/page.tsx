@@ -36,7 +36,7 @@ export default function SchemasPage() {
         <div>
           <Link
             href="/"
-            className="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+            className="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
           >
             &larr; Dashboard
           </Link>
@@ -46,7 +46,7 @@ export default function SchemasPage() {
         </div>
         <Link
           href="/schemas/new"
-          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:from-indigo-600 hover:to-indigo-700 hover:shadow-md active:scale-[0.98] transition-all duration-150"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:from-primary-600 hover:to-primary-700 hover:shadow-md active:scale-[0.98] transition-all duration-150"
         >
           <svg
             className="h-4 w-4"
@@ -92,7 +92,7 @@ export default function SchemasPage() {
           </p>
           <Link
             href="/schemas/new"
-            className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 px-4 py-2 text-sm font-medium text-white hover:from-indigo-600 hover:to-indigo-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
+            className="mt-4 inline-flex items-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 px-4 py-2 text-sm font-medium text-white hover:from-primary-600 hover:to-primary-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
           >
             Eerste schema aanmaken
           </Link>
@@ -122,7 +122,7 @@ export default function SchemasPage() {
                       Standaard
                     </span>
                   )}
-                  <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                  <span className="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-900/30 px-2.5 py-0.5 text-xs font-medium text-primary-700 dark:text-primary-300">
                     {schema.exerciseCount}{" "}
                     {schema.exerciseCount === 1 ? "oefening" : "oefeningen"}
                   </span>
