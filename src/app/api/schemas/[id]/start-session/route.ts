@@ -17,7 +17,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { participantIds } = body;
+    const { participantIds, date } = body;
 
     if (!participantIds?.length) {
       return NextResponse.json(
@@ -26,7 +26,7 @@ export async function POST(
       );
     }
 
-    const session = await startSessionFromSchema(schemaId, participantIds);
+    const session = await startSessionFromSchema(schemaId, participantIds, date);
 
     revalidatePath("/sessions");
     revalidatePath("/");

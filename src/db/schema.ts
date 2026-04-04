@@ -38,10 +38,32 @@ export const exercises = pgTable("exercises", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const trainingSchemas = pgTable("training_schemas", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  isPreset: integer("is_preset").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const trainingSchemaExercises = pgTable("training_schema_exercises", {
+  id: serial("id").primaryKey(),
+  schemaId: integer("schema_id")
+    .notNull()
+    .references(() => trainingSchemas.id, { onDelete: "cascade" }),
+  exerciseId: integer("exercise_id")
+    .notNull()
+    .references(() => exercises.id),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
 export const sessions = pgTable("sessions", {
   id: serial("id").primaryKey(),
   date: date("date").notNull(),
   notes: text("notes"),
+  schemaId: integer("schema_id").references(() => trainingSchemas.id, {
+    onDelete: "set null",
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -72,25 +94,6 @@ export const sessionExercises = pgTable(
   },
   (table) => [unique().on(table.sessionId, table.exerciseId)]
 );
-
-export const trainingSchemas = pgTable("training_schemas", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description"),
-  isPreset: integer("is_preset").default(0).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-export const trainingSchemaExercises = pgTable("training_schema_exercises", {
-  id: serial("id").primaryKey(),
-  schemaId: integer("schema_id")
-    .notNull()
-    .references(() => trainingSchemas.id, { onDelete: "cascade" }),
-  exerciseId: integer("exercise_id")
-    .notNull()
-    .references(() => exercises.id),
-  sortOrder: integer("sort_order").notNull().default(0),
-});
 
 export const userFavoriteExercises = pgTable(
   "user_favorite_exercises",
@@ -156,9 +159,35 @@ export const userFavoriteExercisesRelations = relations(
   })
 );
 
-export const sessionsRelations = relations(sessions, ({ many }) => ({
+export const trainingSchemasRelations = relations(
+  trainingSchemas,
+  ({ many }) => ({
+    trainingSchemaExercises: many(trainingSchemaExercises),
+    sessions: many(sessions),
+  })
+);
+
+export const trainingSchemaExercisesRelations = relations(
+  trainingSchemaExercises,
+  ({ one }) => ({
+    schema: one(trainingSchemas, {
+      fields: [trainingSchemaExercises.schemaId],
+      references: [trainingSchemas.id],
+    }),
+    exercise: one(exercises, {
+      fields: [trainingSchemaExercises.exerciseId],
+      references: [exercises.id],
+    }),
+  })
+);
+
+export const sessionsRelations = relations(sessions, ({ many, one }) => ({
   participants: many(sessionParticipants),
   sessionExercises: many(sessionExercises),
+  trainingSchema: one(trainingSchemas, {
+    fields: [sessions.schemaId],
+    references: [trainingSchemas.id],
+  }),
 }));
 
 export const sessionParticipantsRelations = relations(
@@ -187,27 +216,6 @@ export const sessionExercisesRelations = relations(
       references: [exercises.id],
     }),
     sets: many(sets),
-  })
-);
-
-export const trainingSchemasRelations = relations(
-  trainingSchemas,
-  ({ many }) => ({
-    trainingSchemaExercises: many(trainingSchemaExercises),
-  })
-);
-
-export const trainingSchemaExercisesRelations = relations(
-  trainingSchemaExercises,
-  ({ one }) => ({
-    schema: one(trainingSchemas, {
-      fields: [trainingSchemaExercises.schemaId],
-      references: [trainingSchemas.id],
-    }),
-    exercise: one(exercises, {
-      fields: [trainingSchemaExercises.exerciseId],
-      references: [exercises.id],
-    }),
   })
 );
 

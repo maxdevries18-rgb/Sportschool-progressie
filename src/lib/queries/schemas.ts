@@ -126,16 +126,18 @@ export async function deleteSchema(id: number) {
 
 export async function startSessionFromSchema(
   schemaId: number,
-  participantIds: number[]
+  participantIds: number[],
+  date?: string
 ) {
   const trainingSchema = await getSchemaById(schemaId);
   if (!trainingSchema) throw new Error("Schema niet gevonden");
 
-  const today = new Date().toISOString().split("T")[0];
+  const sessionDate = date ?? new Date().toISOString().split("T")[0];
 
   return createSession({
-    date: today,
+    date: sessionDate,
     notes: trainingSchema.name,
+    schemaId,
     participantIds,
     exercises: trainingSchema.trainingSchemaExercises.map((tse) => ({
       exerciseId: tse.exercise.id,

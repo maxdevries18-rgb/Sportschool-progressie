@@ -1,6 +1,6 @@
 # TODO — Sportschool Tracker
 
-**Voortgang: 7 van 28 gedaan**
+**Voortgang: 9 van 28 gedaan**
 
 ---
 
@@ -15,6 +15,8 @@
 | 5 | Oefeningen | Nieuwe oefeningen kunnen toevoegen via de UI |
 | 6 | Oefeningen | Oefeningen kunnen bewerken of verwijderen |
 | 7 | Oefeningen | Oefeningen kunnen markeren als favoriet |
+| 19 | Trainingsschema's | Schema koppelen aan een sessie als template |
+| 13 | Voortgang & statistieken | Kalenderweergave van trainingsdagen |
 
 ---
 
@@ -36,7 +38,6 @@
 | 10 | Vergelijking tussen twee gebruikers in dezelfde grafiek |
 | 11 | Overzicht van totaal getrainde sessies, sets en volume (all-time stats) |
 | 12 | Streak-teller (hoeveel weken op rij getraind) |
-| 13 | Kalenderweergave van trainingsdagen |
 | 14 | Export van voortgangsdata naar CSV |
 
 ### Dashboard
@@ -50,7 +51,6 @@
 | # | Beschrijving |
 |---|--------------|
 | 18 | Vaste schema's aanmaken (bijv. "Push dag", "Pull dag", "Leg dag") |
-| 19 | Schema koppelen aan een sessie als template |
 | 20 | Wekelijks trainingsplan opstellen |
 
 ### Gebruikerservaring

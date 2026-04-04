@@ -239,6 +239,7 @@ export async function getSessionById(id: number) {
   const session = await db.query.sessions.findFirst({
     where: eq(schema.sessions.id, id),
     with: {
+      trainingSchema: true,
       participants: {
         with: {
           user: true,
@@ -265,6 +266,7 @@ export async function getSessionById(id: number) {
 export async function createSession(data: {
   date: string;
   notes?: string;
+  schemaId?: number;
   participantIds: number[];
   exercises?: {
     exerciseId: number;
@@ -284,6 +286,7 @@ export async function createSession(data: {
       .values({
         date: data.date,
         notes: data.notes,
+        schemaId: data.schemaId,
       })
       .returning();
 

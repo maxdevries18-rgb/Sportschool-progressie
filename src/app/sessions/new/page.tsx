@@ -10,6 +10,23 @@ interface User {
   name: string;
 }
 
+interface Schema {
+  id: number;
+  name: string;
+  description: string | null;
+  exerciseCount: number;
+}
+
+interface SchemaDetail {
+  id: number;
+  name: string;
+  trainingSchemaExercises: {
+    id: number;
+    sortOrder: number;
+    exercise: { id: number; name: string; muscleGroup: string };
+  }[];
+}
+
 export default function NewSessionPage() {
   const router = useRouter();
   const { currentUserId } = useCurrentUser();
@@ -21,6 +38,11 @@ export default function NewSessionPage() {
   const [error, setError] = useState("");
   const [usersLoading, setUsersLoading] = useState(true);
   const [usersError, setUsersError] = useState<string | null>(null);
+
+  const [schemas, setSchemas] = useState<Schema[]>([]);
+  const [selectedSchemaId, setSelectedSchemaId] = useState<number | null>(null);
+  const [schemaDetail, setSchemaDetail] = useState<SchemaDetail | null>(null);
+  const [schemaLoading, setSchemaLoading] = useState(false);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -48,6 +70,28 @@ export default function NewSessionPage() {
     fetchUsers();
   }, [currentUserId]);
 
+  useEffect(() => {
+    fetch("/api/schemas")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setSchemas(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!selectedSchemaId) {
+      setSchemaDetail(null);
+      return;
+    }
+    setSchemaLoading(true);
+    fetch(`/api/schemas/${selectedSchemaId}`)
+      .then((r) => r.json())
+      .then((data) => setSchemaDetail(data))
+      .catch(() => setSchemaDetail(null))
+      .finally(() => setSchemaLoading(false));
+  }, [selectedSchemaId]);
+
   const toggleUser = (userId: number) => {
     setSelectedUserIds((prev) =>
       prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
@@ -65,15 +109,28 @@ export default function NewSessionPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          date,
-          notes: notes || null,
-          participantIds: selectedUserIds,
-        }),
-      });
+      let res: Response;
+
+      if (selectedSchemaId) {
+        res = await fetch(`/api/schemas/${selectedSchemaId}/start-session`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            participantIds: selectedUserIds,
+            date,
+          }),
+        });
+      } else {
+        res = await fetch("/api/sessions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            date,
+            notes: notes || null,
+            participantIds: selectedUserIds,
+          }),
+        });
+      }
 
       if (!res.ok) {
         const data = await res.json();
@@ -121,18 +178,70 @@ export default function NewSessionPage() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Notities (optioneel)
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={2}
-              placeholder="Bijv. leg day, upper body focus..."
-              className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150 placeholder-gray-400 dark:placeholder-gray-500"
-            />
-          </div>
+          {/* Schema picker */}
+          {schemas.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Schema als template (optioneel)
+              </label>
+              <select
+                value={selectedSchemaId ?? ""}
+                onChange={(e) =>
+                  setSelectedSchemaId(e.target.value ? Number(e.target.value) : null)
+                }
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150"
+              >
+                <option value="">— Geen schema —</option>
+                {schemas.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.exerciseCount} oefeningen)
+                  </option>
+                ))}
+              </select>
+
+              {selectedSchemaId && (
+                <div className="mt-3">
+                  {schemaLoading ? (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Laden...</p>
+                  ) : schemaDetail ? (
+                    <div className="rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800/40 px-4 py-3 space-y-1">
+                      <p className="text-xs font-medium text-primary-700 dark:text-primary-300 uppercase tracking-wide">
+                        Oefeningen uit dit schema
+                      </p>
+                      <ul className="space-y-0.5">
+                        {schemaDetail.trainingSchemaExercises
+                          .sort((a, b) => a.sortOrder - b.sortOrder)
+                          .map((tse) => (
+                            <li
+                              key={tse.id}
+                              className="text-sm text-primary-800 dark:text-primary-200"
+                            >
+                              {tse.exercise.name}
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Notities: alleen tonen als geen schema geselecteerd */}
+          {!selectedSchemaId && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Notities (optioneel)
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={2}
+                placeholder="Bijv. leg day, upper body focus..."
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-base sm:text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 dark:focus:ring-primary-400/20 dark:focus:border-primary-400 transition-colors duration-150 placeholder-gray-400 dark:placeholder-gray-500"
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -181,7 +290,7 @@ export default function NewSessionPage() {
           disabled={saving || selectedUserIds.length === 0}
           className="w-full bg-gradient-to-b from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium rounded-xl px-6 py-3 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
         >
-          {saving ? "Aanmaken..." : "Sessie aanmaken"}
+          {saving ? "Aanmaken..." : selectedSchemaId ? "Sessie starten met schema" : "Sessie aanmaken"}
         </button>
       </form>
     </div>

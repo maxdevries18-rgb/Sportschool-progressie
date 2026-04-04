@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/exercises", label: "Oefeningen" },
   { href: "/sessions", label: "Sessies" },
   { href: "/schemas", label: "Schema's" },
+  { href: "/calendar", label: "Kalender" },
   { href: "/progress", label: "Progressie" },
   { href: "/settings", label: "Instellingen" },
 ];

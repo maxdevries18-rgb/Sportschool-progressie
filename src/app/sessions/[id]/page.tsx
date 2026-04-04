@@ -57,6 +57,16 @@ export default async function SessionDetailPage({
               {session.notes}
             </p>
           )}
+          {session.trainingSchema && (
+            <p className="mt-2">
+              <Link
+                href={`/schemas/${session.trainingSchema.id}`}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
+              >
+                📋 {session.trainingSchema.name}
+              </Link>
+            </p>
+          )}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Link
